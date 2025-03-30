@@ -9,6 +9,8 @@ interface OrbitButtonProps {
   orbitRadius: number;
   orbitSpeed: string;
   startAngle?: number;
+  isHighlighted: boolean;
+  id: string;
 }
 
 interface CategoryData {
@@ -18,6 +20,7 @@ interface CategoryData {
   orbitRadius: number;
   orbitSpeed: string;
   startAngle?: number;
+  id: string;
 }
 
 const OrbitButton: React.FC<OrbitButtonProps> = ({ 
@@ -26,14 +29,18 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
   size, 
   orbitRadius, 
   orbitSpeed,
-  startAngle = 0
+  startAngle = 0,
+  isHighlighted,
+  id
 }) => {
   const navigate = useNavigate();
-  const [id] = useState(`orbit-btn-${text.replace(/\s+/g, '-').toLowerCase()}`);
 
   const handleClick = () => {
     navigate(path);
   };
+
+  // Enhanced glow effect with additional highlight state
+  const glowIntensity = isHighlighted ? '0 0 30px rgba(16, 249, 241, 0.9), 0 0 50px rgba(16, 249, 241, 0.7), 0 0 70px rgba(16, 249, 241, 0.5)' : '0 0 15px rgba(16, 249, 241, 0.7), 0 0 25px rgba(16, 249, 241, 0.3)';
 
   // Fixed style calculation to correctly position the button at its start angle
   const style = {
@@ -44,18 +51,23 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
     height: `${size}px`,
     // Use translateX to position at the orbit radius, then rotate around the center
     transform: `rotate(${startAngle}deg) translateX(${orbitRadius}px) rotate(-${startAngle}deg)`,
+    transition: 'box-shadow 2s ease-in-out',
   } as React.CSSProperties;
 
   return (
     <div 
       className={`orbit-item ${orbitSpeed}`} 
       style={style}
-      data-angle={startAngle} // Adding data attribute for debugging
+      data-angle={startAngle}
     >
       <button 
         id={id}
         onClick={handleClick} 
-        className="tron-button w-full h-full text-sm md:text-base lg:text-lg opacity-60 rounded-full"
+        className={`tron-button w-full h-full text-sm md:text-base lg:text-lg rounded-full ${isHighlighted ? 'highlighted-button' : 'opacity-60'}`}
+        style={{
+          boxShadow: glowIntensity,
+          transition: 'box-shadow 2s ease-in-out, opacity 2s ease-in-out',
+        }}
       >
         {text}
       </button>
@@ -63,9 +75,14 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
   );
 };
 
-const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ text, size, path }) => {
+const CenterButton: React.FC<{ text: string; size: number; path: string; isHighlighted: boolean; id: string }> = ({ 
+  text, 
+  size, 
+  path, 
+  isHighlighted,
+  id 
+}) => {
   const navigate = useNavigate();
-  const [id] = useState(`orbit-btn-${text.replace(/\s+/g, '-').toLowerCase()}`);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const animationRef = useRef<number>();
 
@@ -117,17 +134,22 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
     };
   }, [size]);
 
+  // Enhanced glow effect with additional highlight state
+  const glowIntensity = isHighlighted ? 
+    '0 0 30px rgba(16, 249, 241, 0.9), 0 0 50px rgba(16, 249, 241, 0.7), 0 0 70px rgba(16, 249, 241, 0.5)' : 
+    '0 0 20px rgba(16, 249, 241, 0.7), 0 0 40px rgba(16, 249, 241, 0.4)';
+
   return (
     <button 
       id={id}
       onClick={() => navigate(path)} 
-      className="tron-button animate-float glow-text z-10 rounded-full"
+      className={`tron-button animate-float z-10 rounded-full ${isHighlighted ? 'highlighted-button' : 'glow-text'}`}
       style={{ 
         width: `${size}px`, 
         height: `${size}px`,
-        boxShadow: '0 0 20px rgba(16, 249, 241, 0.5), 0 0 40px rgba(16, 249, 241, 0.2)',
+        boxShadow: glowIntensity,
         transform: `translate(${position.x}px, ${position.y}px)`,
-        transition: 'box-shadow 0.3s ease',
+        transition: 'box-shadow 2s ease-in-out, opacity 2s ease-in-out',
       }}
     >
       {text}
@@ -138,6 +160,7 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
 const OrbitSystem: React.FC = () => {
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [orbitSize, setOrbitSize] = useState(0);
+  const [highlightedButtonId, setHighlightedButtonId] = useState<string | null>(null);
   const minStartAngle = 40;
   const maxStartAngle = 100;
   
@@ -167,6 +190,36 @@ const OrbitSystem: React.FC = () => {
     setOrbitSize(minDimension * 0.4);
   }, [windowSize]);
 
+  // Effect for button highlighting
+  useEffect(() => {
+    // Define button highlighting system
+    const highlightNextButton = () => {
+      // Get all button IDs
+      const buttonIds = categories.map(category => category.id);
+      
+      // Select a random button that's not the current highlighted button
+      let nextButtonId = highlightedButtonId;
+      while (nextButtonId === highlightedButtonId || nextButtonId === null) {
+        const randomIndex = Math.floor(Math.random() * buttonIds.length);
+        nextButtonId = buttonIds[randomIndex];
+      }
+
+      setHighlightedButtonId(nextButtonId);
+    };
+
+    // Initial highlight
+    if (highlightedButtonId === null && categories.length > 0) {
+      setHighlightedButtonId(categories[0].id);
+    }
+
+    // Set up the interval for changing the highlighted button
+    const highlightInterval = setInterval(() => {
+      highlightNextButton();
+    }, 5000); // Change highlight every 5 seconds (3s highlight + 2s transition)
+
+    return () => clearInterval(highlightInterval);
+  }, [highlightedButtonId]);
+
   const centerButtonSize = orbitSize * 0.4;
   const tier1ButtonSize = centerButtonSize * 0.75;
   const tier2ButtonSize = tier1ButtonSize * 0.8;
@@ -186,23 +239,23 @@ const OrbitSystem: React.FC = () => {
 
   const categories: CategoryData[] = [
     // Center button now has orbitRadius and orbitSpeed set to 0 and empty string
-    { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },
+    { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "", id: "orbit-btn-about-me" },
     
     // Tier 1 - Apps and Games (positioned at exact opposites)
-    { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: tier1Angle },
-    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: oppositeTier1Angle },
+    { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: tier1Angle, id: "orbit-btn-apps" },
+    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: oppositeTier1Angle, id: "orbit-btn-games" },
     
     // Tier 2 - Web Sites and Code Examples (positioned at exact opposites)
-    { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: tier2Angle },
-    { name: "Code Examples", path: "/code", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: oppositeTier2Angle },
+    { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: tier2Angle, id: "orbit-btn-websites" },
+    { name: "Code Examples", path: "/code", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: oppositeTier2Angle, id: "orbit-btn-code-examples" },
     
     // Tier 3 - 3D Models and 3D Printing (positioned at exact opposites)
-    { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: tier3Angle },
-    { name: "3D Printing", path: "/3d-printing", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: oppositeTier3Angle },
+    { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: tier3Angle, id: "orbit-btn-3d-models" },
+    { name: "3D Printing", path: "/3d-printing", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: oppositeTier3Angle, id: "orbit-btn-3d-printing" },
     
     // Tier 4 - Electronics and Other Projects (positioned at exact opposites)
-    { name: "Electronics", path: "/electronics", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: tier4Angle },
-    { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: oppositeTier4Angle },
+    { name: "Electronics", path: "/electronics", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: tier4Angle, id: "orbit-btn-electronics" },
+    { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: oppositeTier4Angle, id: "orbit-btn-other-projects" },
   ];
 
   const centerCategory = categories[0];
@@ -216,7 +269,9 @@ const OrbitSystem: React.FC = () => {
       <CenterButton 
         text={centerCategory.name} 
         size={centerCategory.size} 
-        path={centerCategory.path} 
+        path={centerCategory.path}
+        isHighlighted={highlightedButtonId === centerCategory.id}
+        id={centerCategory.id} 
       />
       
       {orbitingCategories.map((category, index) => (
@@ -228,6 +283,8 @@ const OrbitSystem: React.FC = () => {
           orbitRadius={category.orbitRadius}
           orbitSpeed={category.orbitSpeed}
           startAngle={category.startAngle}
+          isHighlighted={highlightedButtonId === category.id}
+          id={category.id}
         />
       ))}
     </div>
