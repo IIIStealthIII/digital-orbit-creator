@@ -183,6 +183,7 @@ const OrbitSystem: React.FC = () => {
   console.log("Tier 4 angles:", tier4Angle, oppositeTier4Angle);
 
   const categories: CategoryData[] = [
+    // Center button now has orbitRadius and orbitSpeed set to 0 and empty string
     { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },
     
     // Tier 1 - Apps and Games (positioned at exact opposites)
@@ -209,6 +210,7 @@ const OrbitSystem: React.FC = () => {
     <div className="orbit-container">
       <div className="tron-grid"></div>
       
+      {/* Using CenterButton instead of OrbitButton for the About Me button */}
       <CenterButton 
         text={centerCategory.name} 
         size={centerCategory.size} 
