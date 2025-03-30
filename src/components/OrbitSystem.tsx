@@ -164,7 +164,7 @@ const OrbitSystem: React.FC = () => {
 
   useEffect(() => {
     const minDimension = Math.min(windowSize.width, windowSize.height);
-    setOrbitSize(minDimension * 0.4);
+    setOrbitSize(minDimension * 0.33);
   }, [windowSize]);
 
   const centerButtonSize = orbitSize * 0.4;
