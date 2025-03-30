@@ -134,6 +134,11 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
 const OrbitSystem: React.FC = () => {
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [orbitSize, setOrbitSize] = useState(0);
+  // Generate random angles for each tier
+  const [tier1Angle] = useState(() => Math.floor(Math.random() * 360));
+  const [tier2Angle] = useState(() => Math.floor(Math.random() * 360));
+  const [tier3Angle] = useState(() => Math.floor(Math.random() * 360));
+  const [tier4Angle] = useState(() => Math.floor(Math.random() * 360));
 
   useEffect(() => {
     const handleResize = () => {
@@ -160,24 +165,30 @@ const OrbitSystem: React.FC = () => {
   const tier3Radius = orbitSize * 0.75;
   const tier4Radius = orbitSize * 0.95;
 
+  // Calculate opposite angles
+  const oppositeTier1Angle = (tier1Angle + 180) % 360;
+  const oppositeTier2Angle = (tier2Angle + 180) % 360;
+  const oppositeTier3Angle = (tier3Angle + 180) % 360;
+  const oppositeTier4Angle = (tier4Angle + 180) % 360;
+
   const categories: CategoryData[] = [
     { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },
     
-    // Tier 1 - Games and Apps (positioned at exact opposites)
-    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 0 },
-    { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 180 },
+    // Tier 1 - Apps and Games (positioned at exact opposites)
+    { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: tier1Angle },
+    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: oppositeTier1Angle },
     
-    // Tier 2 - Code Examples and Web Sites (positioned at exact opposites)
-    { name: "Code Examples", path: "/code", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 90 },
-    { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 270 },
+    // Tier 2 - Web Sites and Code Examples (positioned at exact opposites)
+    { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: tier2Angle },
+    { name: "Code Examples", path: "/code", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: oppositeTier2Angle },
     
-    // Tier 3 - 3D Printing and 3D Models (positioned at exact opposites)
-    { name: "3D Printing", path: "/3d-printing", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: 45 },
-    { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: 225 },
+    // Tier 3 - 3D Models and 3D Printing (positioned at exact opposites)
+    { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: tier3Angle },
+    { name: "3D Printing", path: "/3d-printing", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: oppositeTier3Angle },
     
     // Tier 4 - Electronics and Other Projects (positioned at exact opposites)
-    { name: "Electronics", path: "/electronics", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: 135 },
-    { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: 315 },
+    { name: "Electronics", path: "/electronics", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: tier4Angle },
+    { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: oppositeTier4Angle },
   ];
 
   const centerCategory = categories[0];
