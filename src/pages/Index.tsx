@@ -19,7 +19,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center overflow-hidden cursor-none">
       <CustomCursor />
       <div className="relative w-full h-full">
         <OrbitSystem />
