@@ -217,6 +217,8 @@
   }
 
   .custom-cursor-ring-pointer {
+    width: 22px;
+    height: 22px;
     border-color: rgba(16, 249, 241, 0.8);
   }
 

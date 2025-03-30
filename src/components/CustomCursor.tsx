@@ -103,10 +103,9 @@ const CustomCursor: React.FC = () => {
         const distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         const speed = distance / timeDiff;
         
-        // Adjust orbit speed based on cursor speed and pointer state
-        // Now we double the orbit speed when hovering over interactive elements
+        // Adjust orbit speed based on cursor speed
         if (isPointer) {
-          orbitSpeed.current = Math.min(10, 2 + speed * 5); // Double the max speed and base speed
+          orbitSpeed.current = Math.min(5, 1 + speed * 5);
         } else {
           orbitSpeed.current = Math.min(2, 0.5 + speed * 1.5);
         }
@@ -234,21 +233,15 @@ const CustomCursor: React.FC = () => {
       <div 
         ref={cursorRingRef} 
         className={`custom-cursor-ring ${isPointer ? 'custom-cursor-ring-pointer' : ''}`}
-        style={{
-          // Shrink the cursor ring by 30% more when pointing at interactive elements
-          width: isPointer ? '15px' : '28px', // From 22px to 15px (30% smaller than original pointer size)
-          height: isPointer ? '15px' : '28px',
-          transition: 'width 0.3s, height 0.3s, border-color 0.3s, opacity 0.3s',
-        }}
       >
         {orbitDots.map(dot => (
           <div
             key={dot.id}
             className="cursor-orbit-dot"
             style={{
-              transform: `rotate(${dot.angle}deg) translateX(${isPointer ? '7.5px' : '14px'})`,
+              transform: `rotate(${dot.angle}deg) translateX(14px)`,
               opacity: isPointer ? '0.9' : '0.6',
-              transition: 'opacity 0.3s ease, transform 0.3s ease',
+              transition: 'opacity 0.3s ease',
             }}
           />
         ))}
