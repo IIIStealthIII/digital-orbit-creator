@@ -164,7 +164,7 @@ const OrbitSystem: React.FC = () => {
 
   useEffect(() => {
     const minDimension = Math.min(windowSize.width, windowSize.height);
-    setOrbitSize(minDimension * 0.33);
+    setOrbitSize(minDimension * 0.4);
   }, [windowSize]);
 
   const centerButtonSize = orbitSize * 0.4;
@@ -173,10 +173,10 @@ const OrbitSystem: React.FC = () => {
   const tier3ButtonSize = tier2ButtonSize * 0.9;
   const tier4ButtonSize = tier3ButtonSize * 0.9;
 
-  const tier1Radius = orbitSize * 0.35;
-  const tier2Radius = orbitSize * 0.55;
-  const tier3Radius = orbitSize * 0.75;
-  const tier4Radius = orbitSize * 0.95;
+  const tier1Radius = orbitSize * 0.4;
+  const tier2Radius = orbitSize * 0.6;
+  const tier3Radius = orbitSize * 0.8;
+  const tier4Radius = orbitSize * 0.97;
 
   // Log angles for debugging
   console.log("Tier 1 angles:", tier1Angle, oppositeTier1Angle);
