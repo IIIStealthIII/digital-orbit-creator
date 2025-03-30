@@ -8,8 +8,8 @@ const OrbitSystem: React.FC = () => {
   const [orbitSize, setOrbitSize] = useState(0);
   const [highlightedButtonId, setHighlightedButtonId] = useState<string | null>(null);
   const [isButtonDimming, setIsButtonDimming] = useState(false);
-  const minStartAngle = 40;
-  const maxStartAngle = 100;
+  const minStartAngle = 70;
+  const maxStartAngle = 110;
   
   const [tier1Angle] = useState(() => Math.floor(Math.random() * 360));
   const [tier2Angle] = useState(() => (tier1Angle + (Math.random() * (maxStartAngle - minStartAngle) + minStartAngle) % 360));
