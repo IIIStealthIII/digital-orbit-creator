@@ -138,12 +138,14 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
 const OrbitSystem: React.FC = () => {
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [orbitSize, setOrbitSize] = useState(0);
+  const minStartAngle = 40;
+  const maxStartAngle = 100;
   
   // Fixed the random angle generation and explicitly set opposing angles
   const [tier1Angle] = useState(() => Math.floor(Math.random() * 360));
-  const [tier2Angle] = useState(() => (tier1Angle + (Math.random() * (80 - 60) + 60) % 360));
-  const [tier3Angle] = useState(() => (tier2Angle + (Math.random() * (80 - 60) + 60) % 360))
-  const [tier4Angle] = useState(() => (tier3Angle + (Math.random() * (80 - 60) + 60) % 360))
+  const [tier2Angle] = useState(() => (tier1Angle + (Math.random() * (maxStartAngle - minStartAngle) + minStartAngle) % 360));
+  const [tier3Angle] = useState(() => (tier2Angle + (Math.random() * (maxStartAngle - minStartAngle) + minStartAngle) % 360))
+  const [tier4Angle] = useState(() => (tier3Angle + (Math.random() * (maxStartAngle - minStartAngle) + minStartAngle) % 360))
 
   // Calculate opposite angles
   const oppositeTier1Angle = (tier1Angle + 180) % 360;
