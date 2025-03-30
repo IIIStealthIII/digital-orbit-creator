@@ -41,10 +41,12 @@ const CustomCursor: React.FC = () => {
       const { clientX, clientY } = e;
       
       // Position the main cursor dot directly at mouse position
-      cursor.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
+      cursor.style.left = `${clientX}px`;
+      cursor.style.top = `${clientY}px`;
       
       // Position the ring with slight delay for trailing effect
-      cursorRing.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
+      cursorRing.style.left = `${clientX}px`;
+      cursorRing.style.top = `${clientY}px`;
 
       // Calculate cursor speed for particle emission
       const now = Date.now();
@@ -144,13 +146,13 @@ const CustomCursor: React.FC = () => {
           key={particle.id}
           className="cursor-particle"
           style={{
-            left: 0,
-            top: 0,
-            transform: `translate3d(${particle.x}px, ${particle.y}px, 0)`,
+            left: `${particle.x}px`,
+            top: `${particle.y}px`,
             width: `${particle.size}px`,
             height: `${particle.size}px`,
             opacity: particle.opacity,
             backgroundColor: particle.color,
+            transform: 'translate(-50%, -50%)',
           }}
         />
       ))}
