@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -235,6 +236,17 @@
     width: 32px;
     height: 32px;
     border-color: rgba(16, 249, 241, 0.8);
+  }
+
+  .cursor-particle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9997;
+    will-change: transform, opacity, width, height;
+    box-shadow: 0 0 8px 2px currentColor;
+    transition: opacity 0.2s ease-out;
+    mix-blend-mode: screen;
   }
 }
 
