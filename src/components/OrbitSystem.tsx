@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,13 +33,34 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
   id
 }) => {
   const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = () => {
     navigate(path);
   };
 
-  // Enhanced glow effect with additional highlight state
-  const glowIntensity = isHighlighted ? '0 0 30px rgba(16, 249, 241, 0.9), 0 0 50px rgba(16, 249, 241, 0.7), 0 0 70px rgba(16, 249, 241, 0.5)' : '0 0 15px rgba(16, 249, 241, 0.7), 0 0 25px rgba(16, 249, 241, 0.3)';
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  // Base glow effect that's consistent before and after highlighting
+  const baseGlow = '0 0 15px rgba(16, 249, 241, 0.7), 0 0 25px rgba(16, 249, 241, 0.3)';
+  
+  // Enhanced glow for highlighted state (system highlighting)
+  const highlightedGlow = '0 0 30px rgba(16, 249, 241, 0.9), 0 0 50px rgba(16, 249, 241, 0.7), 0 0 70px rgba(16, 249, 241, 0.5)';
+  
+  // Even more enhanced glow for hover state
+  const hoverGlow = '0 0 40px rgba(16, 249, 241, 1), 0 0 60px rgba(16, 249, 241, 0.8), 0 0 80px rgba(16, 249, 241, 0.6)';
+
+  // Choose the appropriate glow based on state
+  const glowIntensity = isHovered ? hoverGlow : (isHighlighted ? highlightedGlow : baseGlow);
+
+  // Calculate scale transform based on hover state
+  const scale = isHovered ? 2 : 1;
 
   // Fixed style calculation to correctly position the button at its start angle
   const style = {
@@ -51,7 +71,8 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
     height: `${size}px`,
     // Use translateX to position at the orbit radius, then rotate around the center
     transform: `rotate(${startAngle}deg) translateX(${orbitRadius}px) rotate(-${startAngle}deg)`,
-    transition: 'box-shadow 2s ease-in-out',
+    transition: 'box-shadow 2s ease-in-out, transform 0.3s ease-in-out',
+    zIndex: isHovered ? 100 : 'auto',
   } as React.CSSProperties;
 
   return (
@@ -63,10 +84,13 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
       <button 
         id={id}
         onClick={handleClick} 
-        className={`tron-button w-full h-full text-sm md:text-base lg:text-lg rounded-full ${isHighlighted ? 'highlighted-button' : 'opacity-60'}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className={`tron-button w-full h-full text-sm md:text-base lg:text-lg rounded-full ${isHighlighted || isHovered ? 'highlighted-button' : 'opacity-60'}`}
         style={{
           boxShadow: glowIntensity,
-          transition: 'box-shadow 2s ease-in-out, opacity 2s ease-in-out',
+          transform: `scale(${scale})`,
+          transition: 'box-shadow 2s ease-in-out, opacity 2s ease-in-out, transform 0.3s ease-in-out',
         }}
       >
         {text}
@@ -84,6 +108,7 @@ const CenterButton: React.FC<{ text: string; size: number; path: string; isHighl
 }) => {
   const navigate = useNavigate();
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
   const animationRef = useRef<number>();
 
   useEffect(() => {
@@ -134,22 +159,43 @@ const CenterButton: React.FC<{ text: string; size: number; path: string; isHighl
     };
   }, [size]);
 
-  // Enhanced glow effect with additional highlight state
-  const glowIntensity = isHighlighted ? 
-    '0 0 30px rgba(16, 249, 241, 0.9), 0 0 50px rgba(16, 249, 241, 0.7), 0 0 70px rgba(16, 249, 241, 0.5)' : 
-    '0 0 20px rgba(16, 249, 241, 0.7), 0 0 40px rgba(16, 249, 241, 0.4)';
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  // Base glow effect that's consistent before and after highlighting
+  const baseGlow = '0 0 20px rgba(16, 249, 241, 0.7), 0 0 40px rgba(16, 249, 241, 0.4)';
+  
+  // Enhanced glow for highlighted state (system highlighting)
+  const highlightedGlow = '0 0 30px rgba(16, 249, 241, 0.9), 0 0 50px rgba(16, 249, 241, 0.7), 0 0 70px rgba(16, 249, 241, 0.5)';
+  
+  // Even more enhanced glow for hover state
+  const hoverGlow = '0 0 40px rgba(16, 249, 241, 1), 0 0 60px rgba(16, 249, 241, 0.8), 0 0 80px rgba(16, 249, 241, 0.6)';
+
+  // Choose the appropriate glow based on state
+  const glowIntensity = isHovered ? hoverGlow : (isHighlighted ? highlightedGlow : baseGlow);
+
+  // Calculate scale based on hover state
+  const scale = isHovered ? 2 : 1;
 
   return (
     <button 
       id={id}
       onClick={() => navigate(path)} 
-      className={`tron-button animate-float z-10 rounded-full ${isHighlighted ? 'highlighted-button' : 'glow-text'}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`tron-button animate-float z-10 rounded-full ${isHighlighted || isHovered ? 'highlighted-button' : 'glow-text'}`}
       style={{ 
         width: `${size}px`, 
         height: `${size}px`,
         boxShadow: glowIntensity,
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        transition: 'box-shadow 2s ease-in-out, opacity 2s ease-in-out',
+        transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+        transition: 'box-shadow 2s ease-in-out, opacity 2s ease-in-out, transform 0.3s ease-in-out',
+        zIndex: isHovered ? 100 : 10,
       }}
     >
       {text}
