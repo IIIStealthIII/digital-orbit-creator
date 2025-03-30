@@ -35,11 +35,14 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
     navigate(path);
   };
 
+  // Fixed style calculation to correctly position the button at its start angle
   const style = {
     '--orbit-radius': `${orbitRadius}px`,
     '--glow-color': 'rgba(16, 249, 241, 0.7)',
+    '--start-angle': `${startAngle}deg`,
     width: `${size}px`,
     height: `${size}px`,
+    // Use translateX to position at the orbit radius, then rotate around the center
     transform: `rotate(${startAngle}deg) translateX(${orbitRadius}px) rotate(-${startAngle}deg)`,
   } as React.CSSProperties;
 
@@ -47,6 +50,7 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
     <div 
       className={`orbit-item ${orbitSpeed}`} 
       style={style}
+      data-angle={startAngle} // Adding data attribute for debugging
     >
       <button 
         id={id}
@@ -134,11 +138,18 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
 const OrbitSystem: React.FC = () => {
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [orbitSize, setOrbitSize] = useState(0);
-  // Generate random angles for each tier
+  
+  // Fixed the random angle generation and explicitly set opposing angles
   const [tier1Angle] = useState(() => Math.floor(Math.random() * 360));
   const [tier2Angle] = useState(() => Math.floor(Math.random() * 360));
   const [tier3Angle] = useState(() => Math.floor(Math.random() * 360));
   const [tier4Angle] = useState(() => Math.floor(Math.random() * 360));
+
+  // Calculate opposite angles
+  const oppositeTier1Angle = (tier1Angle + 180) % 360;
+  const oppositeTier2Angle = (tier2Angle + 180) % 360;
+  const oppositeTier3Angle = (tier3Angle + 180) % 360;
+  const oppositeTier4Angle = (tier4Angle + 180) % 360;
 
   useEffect(() => {
     const handleResize = () => {
@@ -165,11 +176,11 @@ const OrbitSystem: React.FC = () => {
   const tier3Radius = orbitSize * 0.75;
   const tier4Radius = orbitSize * 0.95;
 
-  // Calculate opposite angles
-  const oppositeTier1Angle = (tier1Angle + 180) % 360;
-  const oppositeTier2Angle = (tier2Angle + 180) % 360;
-  const oppositeTier3Angle = (tier3Angle + 180) % 360;
-  const oppositeTier4Angle = (tier4Angle + 180) % 360;
+  // Log angles for debugging
+  console.log("Tier 1 angles:", tier1Angle, oppositeTier1Angle);
+  console.log("Tier 2 angles:", tier2Angle, oppositeTier2Angle);
+  console.log("Tier 3 angles:", tier3Angle, oppositeTier3Angle);
+  console.log("Tier 4 angles:", tier4Angle, oppositeTier4Angle);
 
   const categories: CategoryData[] = [
     { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },

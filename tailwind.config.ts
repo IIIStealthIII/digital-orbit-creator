@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -96,8 +95,8 @@ export default {
 					}
 				},
 				'orbit': {
-					'0%': { transform: 'rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg)' },
-					'100%': { transform: 'rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg)' }
+					'0%': { transform: 'rotate(var(--start-angle)) translateX(var(--orbit-radius)) rotate(calc(-1 * var(--start-angle)))' },
+					'100%': { transform: 'rotate(calc(var(--start-angle) + 360deg)) translateX(var(--orbit-radius)) rotate(calc(-1 * (var(--start-angle) + 360deg)))' }
 				},
 				'glow-pulse': {
 					'0%, 100%': { filter: 'drop-shadow(0 0 5px var(--glow-color))' },
