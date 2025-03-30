@@ -19,9 +19,9 @@ const CustomCursor: React.FC = () => {
   // Colors for particles
   const particleColors = [
     'rgba(16, 249, 241, 0.8)', // Tron cyan
-    'rgba(31, 1, 185, 0.7)',   // Tron blue
+    'rgb(43, 0, 255)',   // Tron blue
     'rgba(255, 255, 255, 0.6)', // White
-    'rgba(220, 240, 255, 0.7)', // Light blue
+    'rgba(0, 195, 255, 0.7)', // Light blue
   ];
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const CustomCursor: React.FC = () => {
         // Only emit particles if cursor is moving fast enough
         if (speed > 0.2) {
           // Add particles based on movement speed (20% more particles)
-          const particleCount = Math.min(Math.floor(speed * 1.8), 4); // Increased from 1.5 to 1.8 and max from 3 to 4
+          const particleCount = Math.min(Math.floor(speed * 1.8), 8); // Increased from 1.5 to 1.8 and max from 3 to 4
           for (let i = 0; i < particleCount; i++) {
             createParticle(clientX, clientY);
           }
