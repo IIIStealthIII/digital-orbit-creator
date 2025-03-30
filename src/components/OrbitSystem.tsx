@@ -157,11 +157,11 @@ const OrbitSystem: React.FC = () => {
   }, [windowSize]);
 
   // Calculate sizes based on screen dimensions
-  const centerButtonSize = orbitSize * 0.33; // 10% larger than before (0.3 * 1.1 = 0.33)
-  const tier1ButtonSize = centerButtonSize * 0.75; // 75% of center button
-  const tier2ButtonSize = tier1ButtonSize * 0.855; // 95% of previous value (0.9 * 0.95 = 0.855)
-  const tier3ButtonSize = tier2ButtonSize * 0.855; // 95% of previous value
-  const tier4ButtonSize = tier3ButtonSize * 0.855; // 95% of previous value
+  const centerButtonSize = orbitSize * 0.33;
+  const tier1ButtonSize = centerButtonSize * 0.75;
+  const tier2ButtonSize = tier1ButtonSize * 0.855;
+  const tier3ButtonSize = tier2ButtonSize * 0.855;
+  const tier4ButtonSize = tier3ButtonSize * 0.855;
 
   // Calculate orbit radius
   const tier1Radius = orbitSize * 0.35;
@@ -174,21 +174,21 @@ const OrbitSystem: React.FC = () => {
     { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },
     
     // Tier 1 - Closest orbit (Games and Apps)
-    // Changing Games to be at 180 degrees and Apps at 0 degrees to make Games opposite to the About Me button
-    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 180 },
+    // Games starts at 180 degrees, Apps at 0 degrees
+    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit-reverse", startAngle: 180 },
     { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 0 },
     
     // Tier 2 - Code Examples and Web Sites (opposites)
     { name: "Code Examples", path: "/code", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 90 },
-    { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 270 },
+    { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow-reverse", startAngle: 270 },
     
     // Tier 3 - 3D Printing and 3D Models (opposites)
     { name: "3D Printing", path: "/3d-printing", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: 45 },
-    { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: 225 },
+    { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower-reverse", startAngle: 225 },
     
     // Tier 4 - Electronics and Other Projects (opposites)
     { name: "Electronics", path: "/electronics", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: 135 },
-    { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: 315 },
+    { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest-reverse", startAngle: 315 },
   ];
 
   const centerCategory = categories[0];
