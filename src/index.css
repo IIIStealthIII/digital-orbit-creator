@@ -90,7 +90,7 @@
   }
 
   body {
-    @apply bg-tron-background text-tron-cyan m-0 p-0 overflow-hidden;
+    @apply bg-tron-background text-tron-cyan m-0 p-0;
     background-image: 
       radial-gradient(circle at 50% 50%, rgba(16, 249, 241, 0.05) 0%, transparent 50%),
       radial-gradient(circle at 80% 20%, rgba(31, 1, 185, 0.03) 0%, transparent 40%);
@@ -130,7 +130,7 @@
   }
 
   .tron-button {
-    @apply relative flex items-center justify-center rounded-full bg-transparent 
+    @apply relative flex items-center justify-center rounded-md bg-transparent 
     border border-tron-cyan border-opacity-30 text-tron-cyan font-medium
     backdrop-filter backdrop-blur-sm transition-all duration-300
     hover:bg-tron-cyan hover:bg-opacity-10 hover:border-opacity-70;
@@ -144,6 +144,10 @@
   .tron-button-highlight {
     @apply bg-tron-cyan bg-opacity-20 border-opacity-100;
     box-shadow: 0 0 30px rgba(16, 249, 241, 0.7);
+  }
+
+  .rhombus-shape {
+    clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
   }
 
   .tron-grid {

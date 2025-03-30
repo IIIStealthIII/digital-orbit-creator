@@ -52,7 +52,7 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
 
   useEffect(() => {
     const createLightningEffect = () => {
-      if (!containerRef.current || !isMoving) return;
+      if (!containerRef.current) return;
 
       // Create lightning particles
       const createParticle = () => {
@@ -111,17 +111,17 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
           const targetCenterY = rect.top + rect.height / 2;
           
           // Calculate distance to target
-          const targetDistance = Math.sqrt(
+          const distanceToTarget = Math.sqrt(
             Math.pow(mousePosition.x - targetCenterX, 2) + 
             Math.pow(mousePosition.y - targetCenterY, 2)
           );
           
           // If close enough to target (10% of screen width)
           const attractionThreshold = window.innerWidth * 0.1;
-          if (targetDistance < attractionThreshold && targetDistance < closestTargetDistance) {
+          if (distanceToTarget < attractionThreshold && distanceToTarget < closestTargetDistance) {
             attractedToTarget = true;
             targetElement = target;
-            closestTargetDistance = targetDistance;
+            closestTargetDistance = distanceToTarget;
             
             // Adjust end position to target
             const targetAngle = Math.atan2(
@@ -149,7 +149,7 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
       };
 
       // Create 2-3 particles
-      const count = 2 + Math.floor(Math.random() * 2);
+      const count = 1 + Math.floor(Math.random() * 2);
       const newParticles = [];
       
       const targetHitCounts: Record<string, number> = {};
@@ -299,15 +299,15 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
       requestRef.current = requestAnimationFrame(updateParticles);
     };
 
-    // Generate particles while mouse is moving
-    const particleInterval = setInterval(createLightningEffect, 50);
+    // Generate particles constantly regardless of mouse movement
+    const particleInterval = setInterval(createLightningEffect, 50); // Changed to 50ms (0.05 seconds)
     requestRef.current = requestAnimationFrame(updateParticles);
 
     return () => {
       clearInterval(particleInterval);
       cancelAnimationFrame(requestRef.current as number);
     };
-  }, [mousePosition, activeTarget, isMoving]);
+  }, [mousePosition, activeTarget]);
 
   return (
     <div 

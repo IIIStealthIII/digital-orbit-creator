@@ -10,12 +10,11 @@ import Games from "./pages/Games";
 import Apps from "./pages/Apps";
 import CodeExamples from "./pages/CodeExamples";
 import ThreeDPrinting from "./pages/ThreeDPrinting";
+import ThreeDModels from "./pages/ThreeDModels";
+import Electronics from "./pages/Electronics";
+import OtherProjects from "./pages/OtherProjects";
+import WebSites from "./pages/WebSites";
 import NotFound from "./pages/NotFound";
-
-// Add these imports when we create the remaining category pages
-// import ThreeDModels from "./pages/ThreeDModels";
-// import Electronics from "./pages/Electronics";
-// import OtherProjects from "./pages/OtherProjects";
 
 const queryClient = new QueryClient();
 
@@ -30,14 +29,12 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/games" element={<Games />} />
           <Route path="/apps" element={<Apps />} />
+          <Route path="/websites" element={<WebSites />} />
           <Route path="/code" element={<CodeExamples />} />
           <Route path="/3d-printing" element={<ThreeDPrinting />} />
-          
-          {/* Placeholders for remaining category pages */}
-          <Route path="/3d-models" element={<ThreeDPrinting />} />
-          <Route path="/electronics" element={<ThreeDPrinting />} />
-          <Route path="/other" element={<ThreeDPrinting />} />
-          
+          <Route path="/3d-models" element={<ThreeDModels />} />
+          <Route path="/electronics" element={<Electronics />} />
+          <Route path="/other" element={<OtherProjects />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
