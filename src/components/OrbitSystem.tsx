@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -66,20 +65,16 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
   const animationRef = useRef<number>();
 
   useEffect(() => {
-    // Random movement boundaries (percentage of size)
     const maxOffset = size * 0.3;
     
-    // Current velocity
     let velocityX = (Math.random() * 2 - 1) * 0.5;
     let velocityY = (Math.random() * 2 - 1) * 0.5;
     
     const updatePosition = () => {
-      // Update position based on velocity
       setPosition(prev => {
         let newX = prev.x + velocityX;
         let newY = prev.y + velocityY;
         
-        // Bounce at boundaries
         if (Math.abs(newX) > maxOffset) {
           velocityX *= -1;
           newX = Math.sign(newX) * maxOffset;
@@ -90,12 +85,10 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
           newY = Math.sign(newY) * maxOffset;
         }
         
-        // Randomly change velocity occasionally
         if (Math.random() < 0.01) {
           velocityX += (Math.random() * 0.2 - 0.1);
           velocityY += (Math.random() * 0.2 - 0.1);
           
-          // Limit maximum velocity
           const maxVelocity = 0.8;
           const currentVelocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
           if (currentVelocity > maxVelocity) {
@@ -151,44 +144,35 @@ const OrbitSystem: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Calculate the base size based on screen dimensions
     const minDimension = Math.min(windowSize.width, windowSize.height);
-    setOrbitSize(minDimension * 0.4); // 40% of smallest screen dimension
+    setOrbitSize(minDimension * 0.4);
   }, [windowSize]);
 
-  // Calculate sizes based on screen dimensions
   const centerButtonSize = orbitSize * 0.33;
   const tier1ButtonSize = centerButtonSize * 0.75;
   const tier2ButtonSize = tier1ButtonSize * 0.855;
   const tier3ButtonSize = tier2ButtonSize * 0.855;
   const tier4ButtonSize = tier3ButtonSize * 0.855;
 
-  // Calculate orbit radius
   const tier1Radius = orbitSize * 0.35;
   const tier2Radius = orbitSize * 0.55;
   const tier3Radius = orbitSize * 0.75;
   const tier4Radius = orbitSize * 0.95;
 
   const categories: CategoryData[] = [
-    // Center
     { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },
     
-    // Tier 1 - Closest orbit (Games and Apps)
-    // Games starts at 180 degrees, Apps at 0 degrees
-    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit-reverse", startAngle: 180 },
-    { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 0 },
+    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 0 },
+    { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 180 },
     
-    // Tier 2 - Code Examples and Web Sites (opposites)
     { name: "Code Examples", path: "/code", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 90 },
-    { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow-reverse", startAngle: 270 },
+    { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 270 },
     
-    // Tier 3 - 3D Printing and 3D Models (opposites)
     { name: "3D Printing", path: "/3d-printing", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: 45 },
-    { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower-reverse", startAngle: 225 },
+    { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: 225 },
     
-    // Tier 4 - Electronics and Other Projects (opposites)
     { name: "Electronics", path: "/electronics", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: 135 },
-    { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest-reverse", startAngle: 315 },
+    { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: 315 },
   ];
 
   const centerCategory = categories[0];
