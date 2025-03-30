@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 
 interface CursorEffectProps {
@@ -6,47 +7,40 @@ interface CursorEffectProps {
 
 const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isMouseInViewport, setIsMouseInViewport] = useState(true);
+  const [isMoving, setIsMoving] = useState(false);
   const [activeTarget, setActiveTarget] = useState<Element | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
   const particlesRef = useRef<HTMLDivElement[]>([]);
-  const trailPointsRef = useRef<{x: number, y: number, timestamp: number}[]>([]);
-  const trailRef = useRef<SVGSVGElement>(null);
   const targetsRef = useRef<Element[]>([]);
   const lastMousePosition = useRef({ x: 0, y: 0 });
+  const movementTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
-      setIsMouseInViewport(true);
+      setIsMoving(true);
       
-      // Add point to trail
-      trailPointsRef.current.push({
-        x: e.clientX,
-        y: e.clientY,
-        timestamp: Date.now()
-      });
-      
-      // Limit trail points to prevent excessive memory usage
-      if (trailPointsRef.current.length > 50) {
-        trailPointsRef.current.shift();
+      // Reset movement timer
+      if (movementTimerRef.current) {
+        clearTimeout(movementTimerRef.current);
       }
+      
+      // Set a timer to detect when movement stops
+      movementTimerRef.current = setTimeout(() => {
+        setIsMoving(false);
+      }, 100);
       
       // Update last position
       lastMousePosition.current = { x: e.clientX, y: e.clientY };
     };
-    
-    const handleMouseLeave = () => {
-      setIsMouseInViewport(false);
-    };
 
     window.addEventListener('mousemove', handleMouseMove);
-    document.documentElement.addEventListener('mouseleave', handleMouseLeave);
-    
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      document.documentElement.removeEventListener('mouseleave', handleMouseLeave);
+      if (movementTimerRef.current) {
+        clearTimeout(movementTimerRef.current);
+      }
     };
   }, []);
 
@@ -58,7 +52,7 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
 
   useEffect(() => {
     const createLightningEffect = () => {
-      if (!containerRef.current || !isMouseInViewport) return;
+      if (!containerRef.current) return;
 
       // Create lightning particles
       const createParticle = () => {
@@ -300,73 +294,26 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
           }
         }
       });
-      
-      // Update trail
-      if (trailRef.current) {
-        // Filter out old trail points (older than 1 second)
-        trailPointsRef.current = trailPointsRef.current.filter(point => 
-          now - point.timestamp < 1000
-        );
-        
-        if (trailPointsRef.current.length > 1) {
-          let pathData = `M ${trailPointsRef.current[0].x} ${trailPointsRef.current[0].y}`;
-          
-          for (let i = 1; i < trailPointsRef.current.length; i++) {
-            pathData += ` L ${trailPointsRef.current[i].x} ${trailPointsRef.current[i].y}`;
-          }
-          
-          const path = trailRef.current.querySelector('path');
-          if (path) {
-            path.setAttribute('d', pathData);
-          }
-        }
-      }
 
       // Continue animation
       requestRef.current = requestAnimationFrame(updateParticles);
     };
 
-    // Generate particles constantly regardless of mouse movement, but only if mouse is in viewport
-    const particleInterval = setInterval(() => {
-      if (isMouseInViewport) {
-        createLightningEffect();
-      }
-    }, 50); // 0.05 seconds
-
+    // Generate particles constantly regardless of mouse movement
+    const particleInterval = setInterval(createLightningEffect, 50); // Changed to 50ms (0.05 seconds)
     requestRef.current = requestAnimationFrame(updateParticles);
 
     return () => {
       clearInterval(particleInterval);
       cancelAnimationFrame(requestRef.current as number);
     };
-  }, [mousePosition, activeTarget, isMouseInViewport]);
+  }, [mousePosition, activeTarget]);
 
   return (
-    <>
-      <div 
-        ref={containerRef} 
-        className="fixed top-0 left-0 w-screen h-screen pointer-events-none z-50"
-      />
-      <svg 
-        ref={trailRef}
-        className="fixed top-0 left-0 w-screen h-screen pointer-events-none z-40"
-        style={{ overflow: 'visible' }}
-      >
-        <path 
-          className="cursor-trail" 
-          d="" 
-          fill="none" 
-          stroke="rgba(16, 249, 241, 0.6)" 
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{ 
-            filter: 'drop-shadow(0 0 5px rgba(16, 249, 241, 0.4))',
-            opacity: 0.7
-          }}
-        />
-      </svg>
-    </>
+    <div 
+      ref={containerRef} 
+      className="fixed top-0 left-0 w-screen h-screen pointer-events-none z-50"
+    />
   );
 };
 

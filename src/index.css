@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -178,12 +179,6 @@
     z-index: 100;
   }
   
-  .cursor-trail {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: draw-line 1s linear forwards;
-  }
-  
   .orbit-container {
     position: relative;
     width: 100%;
@@ -213,12 +208,6 @@
   }
   100% {
     opacity: 0.3;
-  }
-}
-
-@keyframes draw-line {
-  to {
-    stroke-dashoffset: 0;
   }
 }
 

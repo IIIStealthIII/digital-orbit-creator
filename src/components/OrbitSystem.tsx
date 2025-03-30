@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,58 +30,10 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
 }) => {
   const navigate = useNavigate();
   const [id] = useState(`orbit-btn-${text.replace(/\s+/g, '-').toLowerCase()}`);
-  const trailRef = useRef<SVGPathElement>(null);
-  const [trailPoints, setTrailPoints] = useState<{x: number, y: number}[]>([]);
-  const buttonRef = useRef<HTMLDivElement>(null);
-  const requestRef = useRef<number>();
 
   const handleClick = () => {
     navigate(path);
   };
-
-  useEffect(() => {
-    // Only add trails for orbiting buttons (not center button)
-    if (orbitRadius > 0 && buttonRef.current) {
-      const trailLength = 10; // Number of trail points
-      const initialPoints = [];
-      
-      // Create initial trail points
-      for (let i = 0; i < trailLength; i++) {
-        initialPoints.push({ x: 0, y: 0 });
-      }
-      
-      setTrailPoints(initialPoints);
-      
-      const updateTrail = () => {
-        if (buttonRef.current) {
-          const rect = buttonRef.current.getBoundingClientRect();
-          const centerX = rect.left + rect.width / 2;
-          const centerY = rect.top + rect.height / 2;
-          
-          // Add new point at the current position
-          const newTrailPoints = [...trailPoints];
-          newTrailPoints.unshift({ x: centerX, y: centerY });
-          
-          // Remove oldest point
-          if (newTrailPoints.length > trailLength) {
-            newTrailPoints.pop();
-          }
-          
-          setTrailPoints(newTrailPoints);
-        }
-        
-        requestRef.current = requestAnimationFrame(updateTrail);
-      };
-      
-      requestRef.current = requestAnimationFrame(updateTrail);
-      
-      return () => {
-        if (requestRef.current) {
-          cancelAnimationFrame(requestRef.current);
-        }
-      };
-    }
-  }, [orbitRadius, trailPoints]);
 
   const style = {
     '--orbit-radius': `${orbitRadius}px`,
@@ -91,40 +44,18 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
   } as React.CSSProperties;
 
   return (
-    <>
-      {orbitRadius > 0 && trailPoints.length > 1 && (
-        <svg 
-          className="absolute top-0 left-0 w-full h-full pointer-events-none"
-          style={{ overflow: 'visible', zIndex: 5 }}
-        >
-          <path 
-            ref={trailRef}
-            d={`M ${trailPoints.map(p => `${p.x} ${p.y}`).join(' L ')}`}
-            fill="none" 
-            stroke="rgba(16, 249, 241, 0.3)" 
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ 
-              filter: 'drop-shadow(0 0 3px rgba(16, 249, 241, 0.2))',
-            }}
-          />
-        </svg>
-      )}
-      <div 
-        ref={buttonRef}
-        className={`orbit-item ${orbitSpeed}`} 
-        style={style}
+    <div 
+      className={`orbit-item ${orbitSpeed}`} 
+      style={style}
+    >
+      <button 
+        id={id}
+        onClick={handleClick} 
+        className="tron-button w-full h-full text-sm md:text-base lg:text-lg opacity-60 rounded-full"
       >
-        <button 
-          id={id}
-          onClick={handleClick} 
-          className="tron-button w-full h-full text-sm md:text-base lg:text-lg opacity-60 rounded-full"
-        >
-          {text}
-        </button>
-      </div>
-    </>
+        {text}
+      </button>
+    </div>
   );
 };
 
@@ -140,12 +71,13 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
     
     // Current velocity
     let velocityX = (Math.random() * 2 - 1) * 0.5;
+    let velocityY = (Math.random() * 2 - 1) * 0.5;
     
     const updatePosition = () => {
-      // Update position based on velocity - ONLY HORIZONTAL MOVEMENT
+      // Update position based on velocity
       setPosition(prev => {
         let newX = prev.x + velocityX;
-        let newY = prev.y; // Keep Y position fixed
+        let newY = prev.y + velocityY;
         
         // Bounce at boundaries
         if (Math.abs(newX) > maxOffset) {
@@ -153,14 +85,22 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
           newX = Math.sign(newX) * maxOffset;
         }
         
+        if (Math.abs(newY) > maxOffset) {
+          velocityY *= -1;
+          newY = Math.sign(newY) * maxOffset;
+        }
+        
         // Randomly change velocity occasionally
         if (Math.random() < 0.01) {
           velocityX += (Math.random() * 0.2 - 0.1);
+          velocityY += (Math.random() * 0.2 - 0.1);
           
           // Limit maximum velocity
           const maxVelocity = 0.8;
-          if (Math.abs(velocityX) > maxVelocity) {
-            velocityX = Math.sign(velocityX) * maxVelocity;
+          const currentVelocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+          if (currentVelocity > maxVelocity) {
+            velocityX = (velocityX / currentVelocity) * maxVelocity;
+            velocityY = (velocityY / currentVelocity) * maxVelocity;
           }
         }
         
