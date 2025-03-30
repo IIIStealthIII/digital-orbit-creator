@@ -100,11 +100,12 @@ const CustomCursor: React.FC = () => {
       const isClickable = 
         target.tagName.toLowerCase() === 'button' || 
         target.tagName.toLowerCase() === 'a' ||
-        target.closest('button') || 
-        target.closest('a') ||
+        target.closest('button') !== null || 
+        target.closest('a') !== null ||
         target.classList.contains('orbit-item');
         
-      setIsPointer(isClickable);
+      // Make sure we're always setting a boolean value
+      setIsPointer(Boolean(isClickable));
     };
 
     // Add event listeners
