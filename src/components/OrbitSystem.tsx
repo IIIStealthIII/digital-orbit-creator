@@ -30,6 +30,33 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
 }) => {
   const navigate = useNavigate();
   const [id] = useState(`orbit-btn-${text.replace(/\s+/g, '-').toLowerCase()}`);
+  const [glowIntensity, setGlowIntensity] = useState(0.3);
+  const glowRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // Set up random interval for glow animation
+    const setupGlowAnimation = () => {
+      // Clear any existing timeout
+      if (glowRef.current) clearTimeout(glowRef.current);
+
+      // Random duration between 2-7 seconds for glow cycle
+      const glowDuration = Math.random() * 5000 + 2000;
+      
+      // Set new intensity (between 0.3 and 1)
+      const newIntensity = Math.random() * 0.7 + 0.3;
+      setGlowIntensity(newIntensity);
+      
+      // Schedule next glow change
+      glowRef.current = window.setTimeout(setupGlowAnimation, glowDuration);
+    };
+    
+    // Start the glow animation
+    setupGlowAnimation();
+    
+    return () => {
+      if (glowRef.current) clearTimeout(glowRef.current);
+    };
+  }, []);
 
   const handleClick = () => {
     navigate(path);
@@ -56,6 +83,11 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
         id={id}
         onClick={handleClick} 
         className="tron-button w-full h-full text-sm md:text-base lg:text-lg opacity-60 rounded-full"
+        style={{
+          boxShadow: `0 0 ${10 + glowIntensity * 20}px rgba(16, 249, 241, ${glowIntensity})`,
+          borderColor: `rgba(16, 249, 241, ${0.3 + glowIntensity * 0.7})`,
+          transition: 'box-shadow 1.5s ease-in-out, border-color 1.5s ease-in-out'
+        }}
       >
         {text}
       </button>
@@ -67,9 +99,30 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
   const navigate = useNavigate();
   const [id] = useState(`orbit-btn-${text.replace(/\s+/g, '-').toLowerCase()}`);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [glowIntensity, setGlowIntensity] = useState(0.5);
   const animationRef = useRef<number>();
+  const glowRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Set up random interval for glow animation
+    const setupGlowAnimation = () => {
+      // Clear any existing timeout
+      if (glowRef.current) clearTimeout(glowRef.current);
+
+      // Random duration between 2-6 seconds for glow cycle
+      const glowDuration = Math.random() * 4000 + 2000;
+      
+      // Set new intensity (between 0.5 and 1)
+      const newIntensity = Math.random() * 0.5 + 0.5;
+      setGlowIntensity(newIntensity);
+      
+      // Schedule next glow change
+      glowRef.current = window.setTimeout(setupGlowAnimation, glowDuration);
+    };
+    
+    // Start the glow animation
+    setupGlowAnimation();
+
     const maxOffset = size * 0.3;
     
     let velocityX = (Math.random() * 2 - 1) * 0.5;
@@ -114,6 +167,9 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      if (glowRef.current) {
+        clearTimeout(glowRef.current);
+      }
     };
   }, [size]);
 
@@ -125,9 +181,10 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
       style={{ 
         width: `${size}px`, 
         height: `${size}px`,
-        boxShadow: '0 0 20px rgba(16, 249, 241, 0.5), 0 0 40px rgba(16, 249, 241, 0.2)',
+        boxShadow: `0 0 ${20 + glowIntensity * 30}px rgba(16, 249, 241, ${glowIntensity}), 0 0 ${40 + glowIntensity * 20}px rgba(16, 249, 241, ${glowIntensity * 0.4})`,
+        borderColor: `rgba(16, 249, 241, ${0.4 + glowIntensity * 0.6})`,
         transform: `translate(${position.x}px, ${position.y}px)`,
-        transition: 'box-shadow 0.3s ease',
+        transition: 'box-shadow 1.5s ease-in-out, border-color 1.5s ease-in-out',
       }}
     >
       {text}
