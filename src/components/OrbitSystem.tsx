@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface OrbitButtonProps {
@@ -62,6 +62,62 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
 const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ text, size, path }) => {
   const navigate = useNavigate();
   const [id] = useState(`orbit-btn-${text.replace(/\s+/g, '-').toLowerCase()}`);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const animationRef = useRef<number>();
+
+  useEffect(() => {
+    // Random movement boundaries (percentage of size)
+    const maxOffset = size * 0.3;
+    
+    // Current velocity
+    let velocityX = (Math.random() * 2 - 1) * 0.5;
+    let velocityY = (Math.random() * 2 - 1) * 0.5;
+    
+    const updatePosition = () => {
+      // Update position based on velocity
+      setPosition(prev => {
+        let newX = prev.x + velocityX;
+        let newY = prev.y + velocityY;
+        
+        // Bounce at boundaries
+        if (Math.abs(newX) > maxOffset) {
+          velocityX *= -1;
+          newX = Math.sign(newX) * maxOffset;
+        }
+        
+        if (Math.abs(newY) > maxOffset) {
+          velocityY *= -1;
+          newY = Math.sign(newY) * maxOffset;
+        }
+        
+        // Randomly change velocity occasionally
+        if (Math.random() < 0.01) {
+          velocityX += (Math.random() * 0.2 - 0.1);
+          velocityY += (Math.random() * 0.2 - 0.1);
+          
+          // Limit maximum velocity
+          const maxVelocity = 0.8;
+          const currentVelocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+          if (currentVelocity > maxVelocity) {
+            velocityX = (velocityX / currentVelocity) * maxVelocity;
+            velocityY = (velocityY / currentVelocity) * maxVelocity;
+          }
+        }
+        
+        return { x: newX, y: newY };
+      });
+      
+      animationRef.current = requestAnimationFrame(updatePosition);
+    };
+    
+    animationRef.current = requestAnimationFrame(updatePosition);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [size]);
 
   return (
     <button 
@@ -72,6 +128,8 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
         width: `${size}px`, 
         height: `${size}px`,
         boxShadow: '0 0 20px rgba(16, 249, 241, 0.5), 0 0 40px rgba(16, 249, 241, 0.2)',
+        transform: `translate(${position.x}px, ${position.y}px)`,
+        transition: 'box-shadow 0.3s ease',
       }}
     >
       {text}

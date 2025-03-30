@@ -7,19 +7,41 @@ interface CursorEffectProps {
 
 const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMoving, setIsMoving] = useState(false);
   const [activeTarget, setActiveTarget] = useState<Element | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
   const particlesRef = useRef<HTMLDivElement[]>([]);
   const targetsRef = useRef<Element[]>([]);
+  const lastMousePosition = useRef({ x: 0, y: 0 });
+  const movementTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
+      setIsMoving(true);
+      
+      // Reset movement timer
+      if (movementTimerRef.current) {
+        clearTimeout(movementTimerRef.current);
+      }
+      
+      // Set a timer to detect when movement stops
+      movementTimerRef.current = setTimeout(() => {
+        setIsMoving(false);
+      }, 100);
+      
+      // Update last position
+      lastMousePosition.current = { x: e.clientX, y: e.clientY };
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (movementTimerRef.current) {
+        clearTimeout(movementTimerRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -30,7 +52,7 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
 
   useEffect(() => {
     const createLightningEffect = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !isMoving) return;
 
       // Create lightning particles
       const createParticle = () => {
@@ -43,21 +65,47 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
         const distance = window.innerWidth * 0.15; // 15% of screen width
         const duration = 400 + Math.random() * 200; // 0.4 - 0.6 seconds
         
-        // Initial position
+        // Initial position at cursor
         particle.style.left = `${mousePosition.x}px`;
         particle.style.top = `${mousePosition.y}px`;
         
-        // Calculate end position
+        // Calculate end position with zigzag path
         const endX = mousePosition.x + Math.cos(angle) * distance;
         const endY = mousePosition.y + Math.sin(angle) * distance;
+        
+        // Generate zigzag waypoints
+        const zigzagCount = 3 + Math.floor(Math.random() * 3); // 3-5 zigzags
+        const waypoints = [];
+        
+        for (let i = 0; i <= zigzagCount; i++) {
+          const progress = i / zigzagCount;
+          const baseX = mousePosition.x + (endX - mousePosition.x) * progress;
+          const baseY = mousePosition.y + (endY - mousePosition.y) * progress;
+          
+          // Add randomness to zigzag
+          const deviation = 15 + Math.random() * 20;
+          const deviationAngle = Math.random() * Math.PI * 2;
+          
+          waypoints.push({
+            x: baseX + Math.cos(deviationAngle) * deviation,
+            y: baseY + Math.sin(deviationAngle) * deviation
+          });
+        }
+        
+        // First waypoint is always the starting position
+        waypoints[0] = { x: mousePosition.x, y: mousePosition.y };
+        // Last waypoint is the end position (unless attracted to a target)
+        waypoints[zigzagCount] = { x: endX, y: endY };
+        
+        particle.dataset.waypoints = JSON.stringify(waypoints);
+        particle.dataset.currentWaypointIndex = '0';
         
         // Check for attraction to targets
         let attractedToTarget = false;
         let targetElement: Element | null = null;
+        let closestTargetDistance = Infinity;
         
         targetsRef.current.forEach(target => {
-          if (attractedToTarget) return;
-          
           const rect = target.getBoundingClientRect();
           const targetCenterX = rect.left + rect.width / 2;
           const targetCenterY = rect.top + rect.height / 2;
@@ -70,9 +118,10 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
           
           // If close enough to target (10% of screen width)
           const attractionThreshold = window.innerWidth * 0.1;
-          if (targetDistance < attractionThreshold) {
+          if (targetDistance < attractionThreshold && targetDistance < closestTargetDistance) {
             attractedToTarget = true;
             targetElement = target;
+            closestTargetDistance = targetDistance;
             
             // Adjust end position to target
             const targetAngle = Math.atan2(
@@ -80,23 +129,16 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
               targetCenterX - mousePosition.x
             );
             
-            const adjustedSpeed = speed * 1.2;
-            const adjustedTargetDistance = targetDistance * 0.8;
+            // Set the last waypoint to aim at the target
+            waypoints[zigzagCount] = {
+              x: targetCenterX,
+              y: targetCenterY
+            };
             
-            const newEndX = mousePosition.x + Math.cos(targetAngle) * adjustedTargetDistance;
-            const newEndY = mousePosition.y + Math.sin(targetAngle) * adjustedTargetDistance;
-            
-            // Blend original and target directions
-            const blendFactor = 0.7; // 70% toward target, 30% original direction
-            particle.dataset.endX = (endX * (1 - blendFactor) + newEndX * blendFactor).toString();
-            particle.dataset.endY = (endY * (1 - blendFactor) + newEndY * blendFactor).toString();
+            // Update waypoints
+            particle.dataset.waypoints = JSON.stringify(waypoints);
           }
         });
-        
-        if (!attractedToTarget) {
-          particle.dataset.endX = endX.toString();
-          particle.dataset.endY = endY.toString();
-        }
         
         particle.dataset.targetId = targetElement ? targetElement.id : '';
         particle.dataset.startTime = Date.now().toString();
@@ -106,8 +148,8 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
         return { element: particle, targetElement };
       };
 
-      // Create 3-5 particles
-      const count = 3 + Math.floor(Math.random() * 3);
+      // Create 2-3 particles
+      const count = 2 + Math.floor(Math.random() * 2);
       const newParticles = [];
       
       const targetHitCounts: Record<string, number> = {};
@@ -140,19 +182,64 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
       for (const particle of particlesRef.current) {
         const startTime = parseInt(particle.dataset.startTime || '0');
         const duration = parseInt(particle.dataset.duration || '500');
-        const endX = parseFloat(particle.dataset.endX || '0');
-        const endY = parseFloat(particle.dataset.endY || '0');
         const targetId = particle.dataset.targetId;
+        const waypointsString = particle.dataset.waypoints || '[]';
+        const waypoints = JSON.parse(waypointsString);
+        const currentWaypointIndex = parseInt(particle.dataset.currentWaypointIndex || '0');
         
         const progress = Math.min(1, (now - startTime) / duration);
-        const startX = parseFloat(particle.style.left);
-        const startY = parseFloat(particle.style.top);
         
         if (progress < 1) {
-          // Update position
-          const currentX = startX + (endX - startX) * progress;
-          const currentY = startY + (endY - startY) * progress;
+          // Get current and next waypoint
+          const currentWaypoint = waypoints[currentWaypointIndex];
+          const nextWaypointIndex = Math.min(currentWaypointIndex + 1, waypoints.length - 1);
+          const nextWaypoint = waypoints[nextWaypointIndex];
           
+          // Calculate segment progress (from 0 to 1 within this segment)
+          const segmentDuration = duration / (waypoints.length - 1);
+          const segmentStartTime = startTime + currentWaypointIndex * segmentDuration;
+          const segmentProgress = Math.min(1, (now - segmentStartTime) / segmentDuration);
+          
+          // Move to next waypoint if needed
+          if (segmentProgress >= 1 && currentWaypointIndex < waypoints.length - 1) {
+            particle.dataset.currentWaypointIndex = (currentWaypointIndex + 1).toString();
+          }
+          
+          // Interpolate position between waypoints
+          const currentX = currentWaypoint.x + (nextWaypoint.x - currentWaypoint.x) * segmentProgress;
+          const currentY = currentWaypoint.y + (nextWaypoint.y - currentWaypoint.y) * segmentProgress;
+          
+          // Check if particle has reached a target
+          if (targetId) {
+            const target = document.getElementById(targetId);
+            if (target) {
+              const rect = target.getBoundingClientRect();
+              const targetCenterX = rect.left + rect.width / 2;
+              const targetCenterY = rect.top + rect.height / 2;
+              
+              // Calculate distance to target center
+              const distanceToTarget = Math.sqrt(
+                Math.pow(currentX - targetCenterX, 2) + 
+                Math.pow(currentY - targetCenterY, 2)
+              );
+              
+              // If very close to target, absorb the particle
+              if (distanceToTarget < rect.width / 2) {
+                // Target hit effect
+                if (target instanceof HTMLElement) {
+                  target.classList.add('tron-button-highlight');
+                  target.style.transform = 'scale(1.25)';
+                  target.dataset.lastHit = now.toString();
+                }
+                
+                // Mark particle for removal
+                deadParticles.push(particle);
+                continue;
+              }
+            }
+          }
+          
+          // Update position
           particle.style.left = `${currentX}px`;
           particle.style.top = `${currentY}px`;
           
@@ -212,15 +299,15 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
       requestRef.current = requestAnimationFrame(updateParticles);
     };
 
-    // Start lightning effects at certain interval
-    const lightningInterval = setInterval(createLightningEffect, 100);
+    // Generate particles while mouse is moving
+    const particleInterval = setInterval(createLightningEffect, 50);
     requestRef.current = requestAnimationFrame(updateParticles);
 
     return () => {
-      clearInterval(lightningInterval);
+      clearInterval(particleInterval);
       cancelAnimationFrame(requestRef.current as number);
     };
-  }, [mousePosition, activeTarget]);
+  }, [mousePosition, activeTarget, isMoving]);
 
   return (
     <div 

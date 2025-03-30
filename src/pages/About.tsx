@@ -1,9 +1,17 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import TronNavigation from '@/components/TronNavigation';
 import ProjectSection from '@/components/ProjectSection';
 
 const About = () => {
+  // Enable scrolling on content pages
+  useEffect(() => {
+    // Ensure scrolling is enabled
+    document.body.style.overflow = 'auto';
+    
+    // No cleanup needed as other pages will set their own overflow
+  }, []);
+
   return (
     <div className="min-h-screen w-full pt-20 px-4 md:px-8">
       <TronNavigation />
