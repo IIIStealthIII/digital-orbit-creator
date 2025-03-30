@@ -2,19 +2,28 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 const CustomCursor: React.FC = () => {
-  const cursorRef = useRef<HTMLDivElement>(null);
   const cursorRingRef = useRef<HTMLDivElement>(null);
   const [isPointer, setIsPointer] = useState(false);
   const [particles, setParticles] = useState<Array<{
     id: number;
     x: number;
     y: number;
+    velocityX: number;
+    velocityY: number;
     size: number;
     opacity: number;
     color: string;
     lifetime: number;
   }>>([]);
+  const [orbitDots, setOrbitDots] = useState<Array<{
+    id: number;
+    angle: number;
+  }>>([]);
   const nextParticleId = useRef(0);
+  const nextOrbitDotId = useRef(0);
+  const orbitSpeed = useRef(1);
+  const lastCursorPosition = useRef({ x: 0, y: 0 });
+  const cursorVelocity = useRef({ x: 0, y: 0 });
 
   // Colors for particles
   const particleColors = [
@@ -24,11 +33,43 @@ const CustomCursor: React.FC = () => {
     'rgba(0, 195, 255, 0.7)', // Light blue
   ];
 
+  // Initialize orbit dots
   useEffect(() => {
-    const cursor = cursorRef.current;
+    const dotsCount = 12; // Number of dots around the circle
+    const newDots = [];
+    
+    for (let i = 0; i < dotsCount; i++) {
+      newDots.push({
+        id: nextOrbitDotId.current++,
+        angle: (i * 360) / dotsCount,
+      });
+    }
+    
+    setOrbitDots(newDots);
+  }, []);
+
+  // Update orbit dots positions
+  useEffect(() => {
+    const updateOrbitDots = () => {
+      setOrbitDots(prevDots => 
+        prevDots.map(dot => ({
+          ...dot,
+          angle: (dot.angle + orbitSpeed.current) % 360
+        }))
+      );
+      
+      requestAnimationFrame(updateOrbitDots);
+    };
+    
+    const animationId = requestAnimationFrame(updateOrbitDots);
+    
+    return () => cancelAnimationFrame(animationId);
+  }, []);
+
+  useEffect(() => {
     const cursorRing = cursorRingRef.current;
     
-    if (!cursor || !cursorRing) return;
+    if (!cursorRing) return;
 
     // Add custom cursor styles to the body
     document.body.classList.add('cursor-none');
@@ -40,27 +81,41 @@ const CustomCursor: React.FC = () => {
     const moveCursor = (e: MouseEvent) => {
       const { clientX, clientY } = e;
       
-      // Position the main cursor dot directly at mouse position
-      cursor.style.left = `${clientX}px`;
-      cursor.style.top = `${clientY}px`;
-      
       // Position the ring with slight delay for trailing effect
       cursorRing.style.left = `${clientX}px`;
       cursorRing.style.top = `${clientY}px`;
 
-      // Calculate cursor speed for particle emission
+      // Calculate cursor velocity for particle generation
       const now = Date.now();
       const timeDiff = now - lastMoveTime;
       if (timeDiff > 0) {
-        const distance = Math.sqrt(Math.pow(clientX - lastX, 2) + Math.pow(clientY - lastY, 2));
+        // Calculate cursor velocity
+        const deltaX = clientX - lastX;
+        const deltaY = clientY - lastY;
+        
+        // Store current cursor position and velocity for particle generation
+        lastCursorPosition.current = { x: clientX, y: clientY };
+        cursorVelocity.current = { 
+          x: deltaX / timeDiff,
+          y: deltaY / timeDiff
+        };
+        
+        const distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         const speed = distance / timeDiff;
+        
+        // Adjust orbit speed based on cursor speed
+        if (isPointer) {
+          orbitSpeed.current = Math.min(5, 1 + speed * 5);
+        } else {
+          orbitSpeed.current = Math.min(2, 0.5 + speed * 1.5);
+        }
         
         // Only emit particles if cursor is moving fast enough
         if (speed > 0.05) {
-          // Add particles based on movement speed (20% more particles)
-          const particleCount = Math.min(Math.floor(speed * 2), 8); // Increased from 1.5 to 1.8 and max from 3 to 4
+          // Increased particle count by 20%
+          const particleCount = Math.min(Math.floor(speed * 2.4), 10); // Increased from 2 to 2.4 and max from 8 to 10
           for (let i = 0; i < particleCount; i++) {
-            createParticle(clientX, clientY);
+            createParticle(clientX, clientY, -deltaX, -deltaY);
           }
         }
       }
@@ -70,21 +125,34 @@ const CustomCursor: React.FC = () => {
       lastMoveTime = now;
     };
 
-    const createParticle = (x: number, y: number) => {
+    const createParticle = (x: number, y: number, velocityX: number, velocityY: number) => {
       const id = nextParticleId.current++;
       const size = Math.random() * 5 + 2; // Random size between 2-7px
       const color = particleColors[Math.floor(Math.random() * particleColors.length)];
-      // Extended lifetime by 2 seconds (2000ms)
-      const lifetime = Math.random() * 800 + 2400; // 2400-3200ms lifetime (previously 400-1200ms)
+      
+      // Extended lifetime - now 2 seconds longer
+      const lifetime = Math.random() * 800 + 4400; // 4400-5200ms lifetime (extended by 2 seconds)
       
       // Add slight random offset to particle position
       const offsetX = (Math.random() - 0.5) * 10;
       const offsetY = (Math.random() - 0.5) * 10;
       
+      // Create backwards velocity (opposite of cursor direction) with some randomness
+      const speed = Math.sqrt(velocityX*velocityX + velocityY*velocityY);
+      const normalizedVx = speed > 0 ? velocityX / speed : 0;
+      const normalizedVy = speed > 0 ? velocityY / speed : 0;
+      const particleSpeed = 0.5 + Math.random() * 1.5; // Random speed
+      
+      // Final velocity with slight randomness
+      const finalVx = normalizedVx * particleSpeed + (Math.random() - 0.5) * 0.5;
+      const finalVy = normalizedVy * particleSpeed + (Math.random() - 0.5) * 0.5;
+      
       setParticles(prev => [...prev, {
         id,
         x: x + offsetX,
         y: y + offsetY,
+        velocityX: finalVx,
+        velocityY: finalVy,
         size,
         opacity: 0.8,
         color,
@@ -122,10 +190,13 @@ const CustomCursor: React.FC = () => {
       setParticles(prev => 
         prev.map(p => ({
           ...p,
-          // Slower fade to match longer lifetime (previously 0.95)
-          opacity: p.opacity * 0.98,  
-          // Slower shrink to match longer lifetime (previously 0.97)
-          size: p.size * 0.99,        
+          // Slower fade to match longer lifetime
+          opacity: p.opacity * 0.99,
+          // Slower shrink to match longer lifetime
+          size: p.size * 0.995,
+          // Update position based on velocity
+          x: p.x + p.velocityX,
+          y: p.y + p.velocityY
         }))
       );
       animationFrameId = requestAnimationFrame(updateParticles);
@@ -140,7 +211,7 @@ const CustomCursor: React.FC = () => {
       document.body.classList.remove('cursor-none');
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [isPointer]);
 
   return (
     <>
@@ -160,13 +231,21 @@ const CustomCursor: React.FC = () => {
         />
       ))}
       <div 
-        ref={cursorRef} 
-        className={`custom-cursor ${isPointer ? 'custom-cursor-pointer' : ''}`}
-      />
-      <div 
         ref={cursorRingRef} 
         className={`custom-cursor-ring ${isPointer ? 'custom-cursor-ring-pointer' : ''}`}
-      />
+      >
+        {orbitDots.map(dot => (
+          <div
+            key={dot.id}
+            className="cursor-orbit-dot"
+            style={{
+              transform: `rotate(${dot.angle}deg) translateX(14px)`,
+              opacity: isPointer ? '0.9' : '0.6',
+              transition: 'opacity 0.3s ease',
+            }}
+          />
+        ))}
+      </div>
     </>
   );
 };

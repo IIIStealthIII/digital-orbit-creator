@@ -202,30 +202,10 @@
     transform-origin: center;
   }
 
-  .custom-cursor {
-    position: fixed;
-    width: 8px;
-    height: 8px;
-    background-color: rgba(16, 249, 241, 1);
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    transition: width 0.2s, height 0.2s, background-color 0.2s;
-    mix-blend-mode: screen;
-    box-shadow: 0 0 12px rgba(16, 249, 241, 0.7), 0 0 20px rgba(16, 249, 241, 0.5);
-  }
-
-  .custom-cursor-pointer {
-    width: 12px;
-    height: 12px;
-    background-color: rgba(16, 249, 241, 0.9);
-  }
-
   .custom-cursor-ring {
     position: fixed;
-    width: 40px;
-    height: 40px;
+    width: 28px;
+    height: 28px;
     border: 1px solid rgba(16, 249, 241, 0.5);
     border-radius: 50%;
     pointer-events: none;
@@ -237,9 +217,22 @@
   }
 
   .custom-cursor-ring-pointer {
-    width: 32px;
-    height: 32px;
+    width: 22px;
+    height: 22px;
     border-color: rgba(16, 249, 241, 0.8);
+  }
+
+  .cursor-orbit-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: rgba(16, 249, 241, 0.8);
+    transform-origin: 0 0;
+    box-shadow: 0 0 4px rgba(16, 249, 241, 0.6);
+    mix-blend-mode: screen;
   }
 
   .cursor-particle {
@@ -282,5 +275,9 @@
 }
 
 .cursor-none {
+  cursor: none;
+}
+
+button, a, .orbit-item {
   cursor: none;
 }
