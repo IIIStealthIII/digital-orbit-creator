@@ -84,7 +84,7 @@ const CenterButton: React.FC<CenterButtonProps> = ({
   // If hovered, always use the hover glow regardless of highlight state
   const glowIntensity = isHovered ? hoverGlow : (isHighlighted ? highlightedGlow : baseGlow);
 
-  // Calculate scale based on hover state
+  // Calculate scale based on hover state - now matching the OrbitButton scale of 2 when hovered
   const scale = isHovered ? 2 : 1;
 
   return (
