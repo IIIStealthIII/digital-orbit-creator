@@ -173,9 +173,10 @@ const OrbitSystem: React.FC = () => {
     // Center
     { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },
     
-    // Tier 1 - Closest orbit (Games and Apps), positioned opposite to each other
-    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 0 },
-    { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 180 },
+    // Tier 1 - Closest orbit (Games and Apps)
+    // Changing Games to be at 180 degrees and Apps at 0 degrees to make Games opposite to the About Me button
+    { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 180 },
+    { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 0 },
     
     // Tier 2 - Code Examples and Web Sites (opposites)
     { name: "Code Examples", path: "/code", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 90 },
