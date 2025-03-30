@@ -164,10 +164,10 @@ const OrbitSystem: React.FC = () => {
 
   useEffect(() => {
     const minDimension = Math.min(windowSize.width, windowSize.height);
-    setOrbitSize(minDimension * 0.4);
+    setOrbitSize(minDimension * 0.5);
   }, [windowSize]);
 
-  const centerButtonSize = orbitSize * 0.4;
+  const centerButtonSize = Math.min(windowSize.width, windowSize.height);
   const tier1ButtonSize = centerButtonSize * 0.75;
   const tier2ButtonSize = tier1ButtonSize * 0.8;
   const tier3ButtonSize = tier2ButtonSize * 0.9;
