@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 
 interface CursorEffectProps {
@@ -81,10 +80,10 @@ const CursorEffect: React.FC<CursorEffectProps> = ({ targetSelector }) => {
             );
             
             const adjustedSpeed = speed * 1.2;
-            const targetDistance = targetDistance * 0.8;
+            const adjustedTargetDistance = targetDistance * 0.8;
             
-            const newEndX = mousePosition.x + Math.cos(targetAngle) * targetDistance;
-            const newEndY = mousePosition.y + Math.sin(targetAngle) * targetDistance;
+            const newEndX = mousePosition.x + Math.cos(targetAngle) * adjustedTargetDistance;
+            const newEndY = mousePosition.y + Math.sin(targetAngle) * adjustedTargetDistance;
             
             // Blend original and target directions
             const blendFactor = 0.7; // 70% toward target, 30% original direction
