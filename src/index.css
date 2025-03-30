@@ -197,23 +197,6 @@
     position: absolute;
     transform-origin: center;
   }
-
-  /* Animation to make rotation work properly with different starting angles */
-  .animate-orbit-reverse {
-    animation: orbit-reverse 60s linear infinite;
-  }
-  
-  .animate-orbit-slow-reverse {
-    animation: orbit-reverse 70s linear infinite;
-  }
-  
-  .animate-orbit-slower-reverse {
-    animation: orbit-reverse 80s linear infinite;
-  }
-  
-  .animate-orbit-slowest-reverse {
-    animation: orbit-reverse 90s linear infinite;
-  }
 }
 
 @keyframes grid-fade {
@@ -230,9 +213,4 @@
 
 .cursor-none {
   cursor: none;
-}
-
-@keyframes orbit-reverse {
-  0% { transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
-  100% { transform: rotate(-360deg) translateX(var(--orbit-radius)) rotate(360deg); }
 }
