@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -145,9 +146,11 @@
     box-shadow: 0 0 30px rgba(16, 249, 241, 0.7);
   }
   
+  /* Modified this class to remove the animation that might be causing the dimming issue */
   .highlighted-button {
     @apply opacity-100 bg-opacity-20 border-opacity-100;
-    animation: pulse-glow 3s ease-in-out;
+    /* Remove the animation causing the pulsing effect */
+    /* animation: pulse-glow 3s ease-in-out; */
   }
 
   .rhombus-shape {
