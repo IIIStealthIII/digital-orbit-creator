@@ -81,6 +81,7 @@ const CenterButton: React.FC<CenterButtonProps> = ({
   const hoverGlow = '0 0 40px rgba(16, 249, 241, 1), 0 0 60px rgba(16, 249, 241, 0.8), 0 0 80px rgba(16, 249, 241, 0.6)';
 
   // Choose the appropriate glow based on state
+  // If hovered, always use the hover glow regardless of highlight state
   const glowIntensity = isHovered ? hoverGlow : (isHighlighted ? highlightedGlow : baseGlow);
 
   // Set scale to exactly 2 when hovered, otherwise 1
@@ -94,13 +95,11 @@ const CenterButton: React.FC<CenterButtonProps> = ({
       onMouseLeave={handleMouseLeave}
       className={`tron-button animate-float z-10 rounded-full ${isHovered ? 'hover-highlighted' : (isHighlighted ? 'highlighted-button' : 'glow-text')}`}
       style={{ 
-        position: 'absolute',
         width: `${size}px`, 
         height: `${size}px`,
         boxShadow: glowIntensity,
         transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-        transformOrigin: 'center',
-        transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+        transition: 'box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out, color 0.3s ease-in-out, text-shadow 0.3s ease-in-out',
         zIndex: isHovered ? 100 : 10,
         color: isHighlighted || isHovered
           ? 'rgba(16, 249, 241, 1)' /* Bright cyan when highlighted or hovered */

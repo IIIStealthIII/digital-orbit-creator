@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import OrbitButton from './OrbitButton';
 import CenterButton from './CenterButton';
@@ -107,15 +106,13 @@ const OrbitSystem: React.FC = () => {
     <div className="orbit-container">
       <div className="tron-grid"></div>
       
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <CenterButton 
-          text={centerCategory.name} 
-          size={centerCategory.size} 
-          path={centerCategory.path}
-          isHighlighted={highlightedButtonId === centerCategory.id && !isButtonDimming}
-          id={centerCategory.id} 
-        />
-      </div>
+      <CenterButton 
+        text={centerCategory.name} 
+        size={centerCategory.size} 
+        path={centerCategory.path}
+        isHighlighted={highlightedButtonId === centerCategory.id && !isButtonDimming}
+        id={centerCategory.id} 
+      />
       
       {orbitingCategories.map((category, index) => (
         <OrbitButton
