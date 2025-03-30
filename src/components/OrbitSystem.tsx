@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -57,6 +58,7 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
   const hoverGlow = '0 0 40px rgba(16, 249, 241, 1), 0 0 60px rgba(16, 249, 241, 0.8), 0 0 80px rgba(16, 249, 241, 0.6)';
 
   // Choose the appropriate glow based on state
+  // If hovered, always use the hover glow regardless of highlight state
   const glowIntensity = isHovered ? hoverGlow : (isHighlighted ? highlightedGlow : baseGlow);
 
   // Calculate scale transform based on hover state
@@ -90,7 +92,10 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
         style={{
           boxShadow: glowIntensity,
           transform: `scale(${scale})`,
-          transition: 'box-shadow 2s ease-in-out, opacity 2s ease-in-out, transform 0.3s ease-in-out',
+          // Remove transition for box-shadow when hovering to prevent dimming while hovered
+          transition: isHovered 
+            ? 'opacity 2s ease-in-out, transform 0.3s ease-in-out' 
+            : 'box-shadow 2s ease-in-out, opacity 2s ease-in-out, transform 0.3s ease-in-out',
         }}
       >
         {text}
@@ -177,6 +182,7 @@ const CenterButton: React.FC<{ text: string; size: number; path: string; isHighl
   const hoverGlow = '0 0 40px rgba(16, 249, 241, 1), 0 0 60px rgba(16, 249, 241, 0.8), 0 0 80px rgba(16, 249, 241, 0.6)';
 
   // Choose the appropriate glow based on state
+  // If hovered, always use the hover glow regardless of highlight state
   const glowIntensity = isHovered ? hoverGlow : (isHighlighted ? highlightedGlow : baseGlow);
 
   // Calculate scale based on hover state
@@ -194,7 +200,10 @@ const CenterButton: React.FC<{ text: string; size: number; path: string; isHighl
         height: `${size}px`,
         boxShadow: glowIntensity,
         transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-        transition: 'box-shadow 2s ease-in-out, opacity 2s ease-in-out, transform 0.3s ease-in-out',
+        // Remove transition for box-shadow when hovering to prevent dimming
+        transition: isHovered 
+          ? 'opacity 2s ease-in-out, transform 0.3s ease-in-out' 
+          : 'box-shadow 2s ease-in-out, opacity 2s ease-in-out, transform 0.3s ease-in-out',
         zIndex: isHovered ? 100 : 10,
       }}
     >
