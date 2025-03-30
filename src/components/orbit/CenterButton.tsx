@@ -93,20 +93,22 @@ const CenterButton: React.FC<CenterButtonProps> = ({
       onClick={() => navigate(path)} 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`tron-button animate-float z-10 rounded-full ${isHovered ? 'hover-highlighted' : (isHighlighted ? 'highlighted-button' : 'glow-text')}`}
+      className={`tron-button animate-float z-10 rounded-full ${
+        isHovered ? 'hover-highlighted' : (isHighlighted ? 'highlighted-button text-brightness-transition' : 'glow-text')
+      }`}
       style={{ 
         width: `${size}px`, 
         height: `${size}px`,
         boxShadow: glowIntensity,
         transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-        transition: 'box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out, color 0.3s ease-in-out, text-shadow 0.3s ease-in-out',
+        transition: 'box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out',
         zIndex: isHovered ? 100 : 10,
-        color: isHighlighted || isHovered
-          ? 'rgba(16, 249, 241, 1)' /* Bright cyan when highlighted or hovered */
-          : 'rgba(16, 249, 241, 0.7)', /* Dimmer cyan when not highlighted */
-        textShadow: isHighlighted || isHovered
+        color: isHovered 
+          ? 'rgba(16, 249, 241, 1)' /* Bright cyan when hovered */
+          : (isHighlighted ? '' : 'rgba(16, 249, 241, 0.7)'), /* Text color handled by animation when highlighted */
+        textShadow: isHovered
           ? '0 0 5px rgba(16, 249, 241, 0.9), 0 0 10px rgba(16, 249, 241, 0.7), 0 0 15px rgba(16, 249, 241, 0.5)'
-          : '0 0 5px rgba(16, 249, 241, 0.5), 0 0 10px rgba(16, 249, 241, 0.3), 0 0 15px rgba(16, 249, 241, 0.2)',
+          : (isHighlighted ? '' : '0 0 5px rgba(16, 249, 241, 0.5), 0 0 10px rgba(16, 249, 241, 0.3), 0 0 15px rgba(16, 249, 241, 0.2)'),
       }}
     >
       {text}
