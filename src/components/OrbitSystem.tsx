@@ -161,6 +161,7 @@ const OrbitSystem: React.FC = () => {
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [orbitSize, setOrbitSize] = useState(0);
   const [highlightedButtonId, setHighlightedButtonId] = useState<string | null>(null);
+  const [isButtonDimming, setIsButtonDimming] = useState(false);
   const minStartAngle = 40;
   const maxStartAngle = 100;
   
@@ -190,35 +191,48 @@ const OrbitSystem: React.FC = () => {
     setOrbitSize(minDimension * 0.4);
   }, [windowSize]);
 
-  // Effect for button highlighting
+  // Effect for button highlighting with fixed sequence
   useEffect(() => {
-    // Define button highlighting system
+    // Define button highlighting system with proper state management
+    const buttonIds = categories.map(category => category.id);
+    
+    // Select a random button that's not the current highlighted button
     const highlightNextButton = () => {
-      // Get all button IDs
-      const buttonIds = categories.map(category => category.id);
+      setIsButtonDimming(false);
       
-      // Select a random button that's not the current highlighted button
       let nextButtonId = highlightedButtonId;
       while (nextButtonId === highlightedButtonId || nextButtonId === null) {
         const randomIndex = Math.floor(Math.random() * buttonIds.length);
         nextButtonId = buttonIds[randomIndex];
       }
-
+      
       setHighlightedButtonId(nextButtonId);
     };
 
     // Initial highlight
-    if (highlightedButtonId === null && categories.length > 0) {
-      setHighlightedButtonId(categories[0].id);
+    if (highlightedButtonId === null && buttonIds.length > 0) {
+      setHighlightedButtonId(buttonIds[0]);
+      return;
     }
 
-    // Set up the interval for changing the highlighted button
-    const highlightInterval = setInterval(() => {
+    // Sequence: highlight for 3s → dim for 2s → wait for 1s → highlight next
+    const startDimming = () => {
+      setIsButtonDimming(true);
+    };
+    
+    const handleNextHighlight = () => {
       highlightNextButton();
-    }, 5000); // Change highlight every 5 seconds (3s highlight + 2s transition)
+    };
 
-    return () => clearInterval(highlightInterval);
-  }, [highlightedButtonId]);
+    // Set up the timeouts for the sequence
+    const highlightTimer = setTimeout(startDimming, 3000);
+    const waitTimer = isButtonDimming ? setTimeout(handleNextHighlight, 3000) : null;
+    
+    return () => {
+      clearTimeout(highlightTimer);
+      if (waitTimer) clearTimeout(waitTimer);
+    };
+  }, [highlightedButtonId, isButtonDimming]);
 
   const centerButtonSize = orbitSize * 0.4;
   const tier1ButtonSize = centerButtonSize * 0.75;
@@ -230,12 +244,6 @@ const OrbitSystem: React.FC = () => {
   const tier2Radius = orbitSize * 0.68;
   const tier3Radius = orbitSize * 0.85;
   const tier4Radius = orbitSize * 1.1;
-
-  // Log angles for debugging
-  console.log("Tier 1 angles:", tier1Angle, oppositeTier1Angle);
-  console.log("Tier 2 angles:", tier2Angle, oppositeTier2Angle);
-  console.log("Tier 3 angles:", tier3Angle, oppositeTier3Angle);
-  console.log("Tier 4 angles:", tier4Angle, oppositeTier4Angle);
 
   const categories: CategoryData[] = [
     // Center button now has orbitRadius and orbitSpeed set to 0 and empty string
@@ -270,7 +278,7 @@ const OrbitSystem: React.FC = () => {
         text={centerCategory.name} 
         size={centerCategory.size} 
         path={centerCategory.path}
-        isHighlighted={highlightedButtonId === centerCategory.id}
+        isHighlighted={highlightedButtonId === centerCategory.id && !isButtonDimming}
         id={centerCategory.id} 
       />
       
@@ -283,7 +291,7 @@ const OrbitSystem: React.FC = () => {
           orbitRadius={category.orbitRadius}
           orbitSpeed={category.orbitSpeed}
           startAngle={category.startAngle}
-          isHighlighted={highlightedButtonId === category.id}
+          isHighlighted={highlightedButtonId === category.id && !isButtonDimming}
           id={category.id}
         />
       ))}
