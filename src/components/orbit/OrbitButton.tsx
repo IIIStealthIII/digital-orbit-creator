@@ -72,10 +72,12 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
         style={{
           boxShadow: glowIntensity,
           transform: `scale(${scale})`,
-          // Remove transition for box-shadow when hovering to prevent dimming while hovered
+          // Important change: We maintain separate transitions for different states
+          // When hovering, don't include box-shadow in the transition to prevent dimming
+          // When not hovering, include box-shadow transition for smooth return to normal state
           transition: isHovered 
-            ? 'opacity 2s ease-in-out, transform 0.3s ease-in-out' 
-            : 'box-shadow 2s ease-in-out, opacity 2s ease-in-out, transform 0.3s ease-in-out',
+            ? 'transform 0.3s ease-in-out' 
+            : 'box-shadow 2s ease-in-out, transform 0.3s ease-in-out',
         }}
       >
         {text}
