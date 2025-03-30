@@ -51,7 +51,7 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
       <button 
         id={id}
         onClick={handleClick} 
-        className="tron-button w-full h-full text-sm md:text-base lg:text-lg opacity-60"
+        className="tron-button w-full h-full text-sm md:text-base lg:text-lg opacity-60 rounded-full"
       >
         {text}
       </button>
@@ -123,7 +123,7 @@ const CenterButton: React.FC<{ text: string; size: number; path: string }> = ({ 
     <button 
       id={id}
       onClick={() => navigate(path)} 
-      className="tron-button animate-float glow-text z-10"
+      className="tron-button animate-float glow-text z-10 rounded-full"
       style={{ 
         width: `${size}px`, 
         height: `${size}px`,
@@ -157,11 +157,11 @@ const OrbitSystem: React.FC = () => {
   }, [windowSize]);
 
   // Calculate sizes based on screen dimensions
-  const centerButtonSize = orbitSize * 0.3; // 30% of orbit size
+  const centerButtonSize = orbitSize * 0.33; // 10% larger than before (0.3 * 1.1 = 0.33)
   const tier1ButtonSize = centerButtonSize * 0.75; // 75% of center button
-  const tier2ButtonSize = tier1ButtonSize * 0.9; // 90% of tier 1
-  const tier3ButtonSize = tier2ButtonSize * 0.9; // 90% of tier 2
-  const tier4ButtonSize = tier3ButtonSize * 0.9; // 90% of tier 3
+  const tier2ButtonSize = tier1ButtonSize * 0.855; // 95% of previous value (0.9 * 0.95 = 0.855)
+  const tier3ButtonSize = tier2ButtonSize * 0.855; // 95% of previous value
+  const tier4ButtonSize = tier3ButtonSize * 0.855; // 95% of previous value
 
   // Calculate orbit radius
   const tier1Radius = orbitSize * 0.35;
@@ -173,7 +173,7 @@ const OrbitSystem: React.FC = () => {
     // Center
     { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },
     
-    // Tier 1 - Closest orbit (Games and Apps)
+    // Tier 1 - Closest orbit (Games and Apps), positioned opposite to each other
     { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 0 },
     { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 180 },
     
@@ -181,11 +181,11 @@ const OrbitSystem: React.FC = () => {
     { name: "Code Examples", path: "/code", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 90 },
     { name: "Web Sites", path: "/websites", size: tier2ButtonSize, orbitRadius: tier2Radius, orbitSpeed: "animate-orbit-slow", startAngle: 270 },
     
-    // Tier 3
+    // Tier 3 - 3D Printing and 3D Models (opposites)
     { name: "3D Printing", path: "/3d-printing", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: 45 },
     { name: "3D Models", path: "/3d-models", size: tier3ButtonSize, orbitRadius: tier3Radius, orbitSpeed: "animate-orbit-slower", startAngle: 225 },
     
-    // Tier 4 - Furthest orbit
+    // Tier 4 - Electronics and Other Projects (opposites)
     { name: "Electronics", path: "/electronics", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: 135 },
     { name: "Other Projects", path: "/other", size: tier4ButtonSize, orbitRadius: tier4Radius, orbitSpeed: "animate-orbit-slowest", startAngle: 315 },
   ];
