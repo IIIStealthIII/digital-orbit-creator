@@ -57,8 +57,8 @@ const CustomCursor: React.FC = () => {
         
         // Only emit particles if cursor is moving fast enough
         if (speed > 0.2) {
-          // Add particles based on movement speed (20% more particles)
-          const particleCount = Math.min(Math.floor(speed * 1.8), 4); // Increased from 1.5 to 1.8 and max from 3 to 4
+          // Add particles based on movement speed
+          const particleCount = Math.min(Math.floor(speed * 1.5), 3);
           for (let i = 0; i < particleCount; i++) {
             createParticle(clientX, clientY);
           }
@@ -74,8 +74,7 @@ const CustomCursor: React.FC = () => {
       const id = nextParticleId.current++;
       const size = Math.random() * 5 + 2; // Random size between 2-7px
       const color = particleColors[Math.floor(Math.random() * particleColors.length)];
-      // Extended lifetime by 2 seconds (2000ms)
-      const lifetime = Math.random() * 800 + 2400; // 2400-3200ms lifetime (previously 400-1200ms)
+      const lifetime = Math.random() * 800 + 400; // 400-1200ms lifetime
       
       // Add slight random offset to particle position
       const offsetX = (Math.random() - 0.5) * 10;
@@ -122,10 +121,8 @@ const CustomCursor: React.FC = () => {
       setParticles(prev => 
         prev.map(p => ({
           ...p,
-          // Slower fade to match longer lifetime (previously 0.95)
-          opacity: p.opacity * 0.98,  
-          // Slower shrink to match longer lifetime (previously 0.97)
-          size: p.size * 0.99,        
+          opacity: p.opacity * 0.95, // Fade out
+          size: p.size * 0.97, // Shrink
         }))
       );
       animationFrameId = requestAnimationFrame(updateParticles);

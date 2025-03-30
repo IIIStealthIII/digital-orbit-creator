@@ -84,7 +84,7 @@ const CenterButton: React.FC<CenterButtonProps> = ({
   // If hovered, always use the hover glow regardless of highlight state
   const glowIntensity = isHovered ? hoverGlow : (isHighlighted ? highlightedGlow : baseGlow);
 
-  // Calculate scale based on hover state - now matching the OrbitButton scale of 2 when hovered
+  // Calculate scale based on hover state
   const scale = isHovered ? 2 : 1;
 
   return (
@@ -93,24 +93,17 @@ const CenterButton: React.FC<CenterButtonProps> = ({
       onClick={() => navigate(path)} 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`tron-button animate-float z-10 rounded-full ${isHovered ? 'hover-highlighted' : (isHighlighted ? 'highlighted-button' : 'glow-text')}`}
+      className={`tron-button animate-float z-10 rounded-full ${isHighlighted || isHovered ? 'highlighted-button' : 'glow-text'}`}
       style={{ 
         width: `${size}px`, 
         height: `${size}px`,
         boxShadow: glowIntensity,
         transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-        // Improve transitions to include text color/shadow for a consistent experience
+        // Remove transition for box-shadow when hovering to prevent dimming
         transition: isHovered 
-          ? 'transform 0.3s ease-in-out' 
-          : 'box-shadow 2s ease-in-out, transform 0.3s ease-in-out, color 2s ease-in-out, text-shadow 2s ease-in-out',
+          ? 'opacity 2s ease-in-out, transform 0.3s ease-in-out' 
+          : 'box-shadow 2s ease-in-out, opacity 2s ease-in-out, transform 0.3s ease-in-out',
         zIndex: isHovered ? 100 : 10,
-        // Improved text color transition that goes from bright to dim
-        color: isHighlighted 
-          ? 'rgba(16, 249, 241, 1)' /* Bright cyan when highlighted */
-          : 'rgba(16, 249, 241, 0.7)', /* Dimmer cyan when not highlighted */
-        textShadow: isHighlighted 
-          ? '0 0 5px rgba(16, 249, 241, 0.9), 0 0 10px rgba(16, 249, 241, 0.7), 0 0 15px rgba(16, 249, 241, 0.5)'
-          : '0 0 5px rgba(16, 249, 241, 0.5), 0 0 10px rgba(16, 249, 241, 0.3), 0 0 15px rgba(16, 249, 241, 0.2)',
       }}
     >
       {text}
