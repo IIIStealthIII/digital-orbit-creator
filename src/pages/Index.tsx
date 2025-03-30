@@ -8,13 +8,16 @@ const Index = () => {
   useEffect(() => {
     // Save original overflow value
     const originalOverflow = document.body.style.overflow;
+    const originalHeight = document.body.style.height;
     
-    // Disable scrolling
+    // Disable scrolling and set 100% height
     document.body.style.overflow = 'hidden';
+    document.body.style.height = '100%';
     
     // Restore original overflow on unmount
     return () => {
       document.body.style.overflow = originalOverflow;
+      document.body.style.height = originalHeight;
     };
   }, []);
 
