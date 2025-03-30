@@ -76,8 +76,10 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
           transition: isHovered 
             ? 'transform 0.3s ease-in-out' 
             : 'box-shadow 2s ease-in-out, transform 0.3s ease-in-out, color 2s ease-in-out, text-shadow 2s ease-in-out',
-          // Add text dimming transition
-          color: isHighlighted ? 'rgba(16, 249, 241, 1)' : 'rgba(16, 249, 241, 0.7)',
+          // Improved text color transition that goes from bright to dim
+          color: isHighlighted 
+            ? 'rgba(16, 249, 241, 1)' /* Bright cyan when highlighted */
+            : 'rgba(16, 249, 241, 0.7)', /* Dimmer cyan when not highlighted */
           textShadow: isHighlighted 
             ? '0 0 5px rgba(16, 249, 241, 0.9), 0 0 10px rgba(16, 249, 241, 0.7), 0 0 15px rgba(16, 249, 241, 0.5)'
             : '0 0 5px rgba(16, 249, 241, 0.5), 0 0 10px rgba(16, 249, 241, 0.3), 0 0 15px rgba(16, 249, 241, 0.2)',
