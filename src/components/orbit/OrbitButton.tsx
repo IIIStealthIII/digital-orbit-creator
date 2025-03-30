@@ -53,7 +53,8 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
     height: `${size}px`,
     // Use translateX to position at the orbit radius, then rotate around the center
     transform: `rotate(${startAngle}deg) translateX(${orbitRadius}px) rotate(-${startAngle}deg)`,
-    transition: 'box-shadow 2s ease-in-out, transform 0.3s ease-in-out',
+    // Remove transition from the parent to avoid interference with hover transitions
+    transition: 'transform 0.3s ease-in-out',
     zIndex: isHovered ? 100 : 'auto',
   } as React.CSSProperties;
 
@@ -72,12 +73,9 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
         style={{
           boxShadow: glowIntensity,
           transform: `scale(${scale})`,
-          // Important change: We maintain separate transitions for different states
-          // When hovering, don't include box-shadow in the transition to prevent dimming
-          // When not hovering, include box-shadow transition for smooth return to normal state
-          transition: isHovered 
-            ? 'transform 0.3s ease-in-out' 
-            : 'box-shadow 2s ease-in-out, transform 0.3s ease-in-out',
+          // Complete removal of transitions for box-shadow to prevent any dimming during hover
+          // Only maintain transform transition for the scaling effect
+          transition: 'transform 0.3s ease-in-out',
         }}
       >
         {text}
