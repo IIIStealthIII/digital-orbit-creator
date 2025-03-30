@@ -93,7 +93,7 @@ const CenterButton: React.FC<CenterButtonProps> = ({
       onClick={() => navigate(path)} 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`tron-button animate-float z-10 rounded-full ${isHighlighted || isHovered ? 'highlighted-button' : 'glow-text'}`}
+      className={`tron-button animate-float z-10 rounded-full ${isHovered ? 'hover-highlighted' : (isHighlighted ? 'highlighted-button' : 'glow-text')}`}
       style={{ 
         width: `${size}px`, 
         height: `${size}px`,
