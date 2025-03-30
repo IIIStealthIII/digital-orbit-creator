@@ -20,7 +20,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
-      <CursorEffect targetSelector=".tron-button" />
+      <CursorEffect />
       <div className="relative w-full h-full">
         <OrbitSystem />
       </div>
