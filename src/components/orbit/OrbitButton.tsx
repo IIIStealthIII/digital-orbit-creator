@@ -75,7 +75,7 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
           // Important: don't transition box-shadow during hover to prevent flicker
           transition: isHovered 
             ? 'transform 0.5s ease-in-out' 
-            : 'box-shadow 2s ease-in-out, transform 2s ease-in-out, color 2s ease-in-out, text-shadow 2s ease-in-out',
+            : 'box-shadow 2s ease-in-out, transform .5s ease-in-out, color 2s ease-in-out, text-shadow 2s ease-in-out',
           // Improved text color transition that goes from bright to dim
           color: isHighlighted 
             ? 'rgba(16, 249, 241, 1)' /* Bright cyan when highlighted */
