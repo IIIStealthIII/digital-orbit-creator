@@ -141,9 +141,9 @@ const OrbitSystem: React.FC = () => {
   
   // Fixed the random angle generation and explicitly set opposing angles
   const [tier1Angle] = useState(() => Math.floor(Math.random() * 360));
-  const [tier2Angle] = useState(() => Math.floor(Math.random() * 360));
-  const [tier3Angle] = useState(() => Math.floor(Math.random() * 360));
-  const [tier4Angle] = useState(() => Math.floor(Math.random() * 360));
+  const [tier2Angle] = useState(() => (tier1Angle + (Math.random() * (80 - 60) + 60) % 360));
+  const [tier3Angle] = useState(() => (tier2Angle + (Math.random() * (80 - 60) + 60) % 360))
+  const [tier4Angle] = useState(() => (tier3Angle + (Math.random() * (80 - 60) + 60) % 360))
 
   // Calculate opposite angles
   const oppositeTier1Angle = (tier1Angle + 180) % 360;
