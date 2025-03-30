@@ -176,7 +176,7 @@ const OrbitSystem: React.FC = () => {
   const tier1Radius = orbitSize * 0.4;
   const tier2Radius = orbitSize * 0.6;
   const tier3Radius = orbitSize * 0.8;
-  const tier4Radius = orbitSize * 1.5;
+  const tier4Radius = orbitSize * 0.97;
 
   // Log angles for debugging
   console.log("Tier 1 angles:", tier1Angle, oppositeTier1Angle);
