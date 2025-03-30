@@ -68,13 +68,11 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
         onClick={handleClick} 
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`tron-button w-full h-full text-sm md:text-base lg:text-lg rounded-full ${isHighlighted || isHovered ? 'highlighted-button' : 'opacity-60'}`}
+        className={`tron-button w-full h-full text-sm md:text-base lg:text-lg rounded-full ${isHovered ? 'hover-highlighted' : (isHighlighted ? 'highlighted-button' : 'opacity-60')}`}
         style={{
           boxShadow: glowIntensity,
           transform: `scale(${scale})`,
-          // Important change: We maintain separate transitions for different states
-          // When hovering, don't include box-shadow in the transition to prevent dimming
-          // When not hovering, include box-shadow transition for smooth return to normal state
+          // Important: don't transition box-shadow during hover to prevent flicker
           transition: isHovered 
             ? 'transform 0.3s ease-in-out' 
             : 'box-shadow 2s ease-in-out, transform 0.3s ease-in-out',
