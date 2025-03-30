@@ -35,11 +35,13 @@ const OrbitButton: React.FC<OrbitButtonProps> = ({
     navigate(path);
   };
 
+  // Apply rotation based on startAngle
   const style = {
     '--orbit-radius': `${orbitRadius}px`,
     '--glow-color': 'rgba(16, 249, 241, 0.7)',
     width: `${size}px`,
     height: `${size}px`,
+    // Apply the initial position based on startAngle
     transform: `rotate(${startAngle}deg) translateX(${orbitRadius}px) rotate(-${startAngle}deg)`,
   } as React.CSSProperties;
 
@@ -174,7 +176,7 @@ const OrbitSystem: React.FC = () => {
     { name: "About Me", path: "/about", size: centerButtonSize, orbitRadius: 0, orbitSpeed: "" },
     
     // Tier 1 - Closest orbit (Games and Apps)
-    // Games starts at 180 degrees, Apps at 0 degrees
+    // Games starts at 180 degrees (opposite of Apps), with reverse orbit
     { name: "Games", path: "/games", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit-reverse", startAngle: 180 },
     { name: "Apps", path: "/apps", size: tier1ButtonSize, orbitRadius: tier1Radius, orbitSpeed: "animate-orbit", startAngle: 0 },
     

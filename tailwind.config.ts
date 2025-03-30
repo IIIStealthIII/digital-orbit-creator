@@ -99,6 +99,10 @@ export default {
 					'0%': { transform: 'rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg)' },
 					'100%': { transform: 'rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg)' }
 				},
+				'orbit-reverse': {
+					'0%': { transform: 'rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg)' },
+					'100%': { transform: 'rotate(-360deg) translateX(var(--orbit-radius)) rotate(360deg)' }
+				},
 				'glow-pulse': {
 					'0%, 100%': { filter: 'drop-shadow(0 0 5px var(--glow-color))' },
 					'50%': { filter: 'drop-shadow(0 0 15px var(--glow-color))' }
@@ -120,9 +124,13 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'orbit': 'orbit 60s linear infinite',
+				'orbit-reverse': 'orbit-reverse 60s linear infinite',
 				'orbit-slow': 'orbit 70s linear infinite',
+				'orbit-slow-reverse': 'orbit-reverse 70s linear infinite',
 				'orbit-slower': 'orbit 80s linear infinite',
+				'orbit-slower-reverse': 'orbit-reverse 80s linear infinite',
 				'orbit-slowest': 'orbit 90s linear infinite',
+				'orbit-slowest-reverse': 'orbit-reverse 90s linear infinite',
 				'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
 				'button-grow': 'button-grow 0.5s forwards',
 				'button-shrink': 'button-shrink 0.5s forwards',
