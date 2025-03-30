@@ -84,7 +84,7 @@ const CenterButton: React.FC<CenterButtonProps> = ({
   // If hovered, always use the hover glow regardless of highlight state
   const glowIntensity = isHovered ? hoverGlow : (isHighlighted ? highlightedGlow : baseGlow);
 
-  // Update the scale to make it grow twice as big on hover (from 1 to 2)
+  // Set scale to exactly 2 when hovered, otherwise 1
   const scale = isHovered ? 2 : 1;
 
   return (
@@ -99,16 +99,12 @@ const CenterButton: React.FC<CenterButtonProps> = ({
         height: `${size}px`,
         boxShadow: glowIntensity,
         transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-        // Improve transitions to include text color/shadow for a consistent experience
-        transition: isHovered 
-          ? 'transform 0.3s ease-in-out' 
-          : 'box-shadow 2s ease-in-out, transform 0.3s ease-in-out, color 2s ease-in-out, text-shadow 2s ease-in-out',
+        transition: 'box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out, color 0.3s ease-in-out, text-shadow 0.3s ease-in-out',
         zIndex: isHovered ? 100 : 10,
-        // Improved text color transition that goes from bright to dim
-        color: isHighlighted 
-          ? 'rgba(16, 249, 241, 1)' /* Bright cyan when highlighted */
+        color: isHighlighted || isHovered
+          ? 'rgba(16, 249, 241, 1)' /* Bright cyan when highlighted or hovered */
           : 'rgba(16, 249, 241, 0.7)', /* Dimmer cyan when not highlighted */
-        textShadow: isHighlighted 
+        textShadow: isHighlighted || isHovered
           ? '0 0 5px rgba(16, 249, 241, 0.9), 0 0 10px rgba(16, 249, 241, 0.7), 0 0 15px rgba(16, 249, 241, 0.5)'
           : '0 0 5px rgba(16, 249, 241, 0.5), 0 0 10px rgba(16, 249, 241, 0.3), 0 0 15px rgba(16, 249, 241, 0.2)',
       }}
