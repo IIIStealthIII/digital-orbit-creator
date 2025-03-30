@@ -56,9 +56,9 @@ const CustomCursor: React.FC = () => {
         const speed = distance / timeDiff;
         
         // Only emit particles if cursor is moving fast enough
-        if (speed > 0.2) {
+        if (speed > 0.05) {
           // Add particles based on movement speed (20% more particles)
-          const particleCount = Math.min(Math.floor(speed * 1.8), 8); // Increased from 1.5 to 1.8 and max from 3 to 4
+          const particleCount = Math.min(Math.floor(speed * 2), 8); // Increased from 1.5 to 1.8 and max from 3 to 4
           for (let i = 0; i < particleCount; i++) {
             createParticle(clientX, clientY);
           }
