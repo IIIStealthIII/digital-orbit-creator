@@ -107,7 +107,7 @@ const CustomCursor: React.FC = () => {
         
       
         if (isPointer) {
-          orbitSpeed.current = 10;
+          orbitSpeed.current = 6;
         } else {
           orbitSpeed.current = 1.5;
         }
