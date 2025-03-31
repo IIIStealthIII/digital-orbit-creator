@@ -1,7 +1,9 @@
-
 import React, { useEffect, useState, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const CustomCursor: React.FC = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
   const cursorRingRef = useRef<HTMLDivElement>(null);
   const [isPointer, setIsPointer] = useState(false);
   const [particles, setParticles] = useState<Array<{
@@ -112,8 +114,8 @@ const CustomCursor: React.FC = () => {
         
         // Only emit particles if cursor is moving fast enough
         if (speed > 0.05) {
-          // Increased particle count by 20%
-          const particleCount = Math.min(Math.floor(speed * 2.4), 10); // Increased from 2 to 2.4 and max from 8 to 10
+          // Adjust particle count based on page
+          const particleCount = Math.min(Math.floor(speed * (isHomePage ? 2.4 : 1.8)), isHomePage ? 10 : 6);
           for (let i = 0; i < particleCount; i++) {
             createParticle(clientX, clientY, -deltaX, -deltaY);
           }
@@ -130,8 +132,12 @@ const CustomCursor: React.FC = () => {
       const size = Math.random() * 5 + 2; // Random size between 2-7px
       const color = particleColors[Math.floor(Math.random() * particleColors.length)];
       
-      // Extended lifetime - now 2 seconds longer
-      const lifetime = Math.random() * 800 + 4400; // 4400-5200ms lifetime (extended by 2 seconds)
+      // Set lifetime based on current page
+      // Home page (splash): 4400-5200ms lifetime
+      // Other pages: 400-600ms lifetime (significantly shorter)
+      const lifetime = isHomePage 
+        ? Math.random() * 800 + 4400  // 4400-5200ms for home page
+        : Math.random() * 200 + 400;  // 400-600ms for other pages
       
       // Add slight random offset to particle position
       const offsetX = (Math.random() - 0.5) * 10;
@@ -190,10 +196,10 @@ const CustomCursor: React.FC = () => {
       setParticles(prev => 
         prev.map(p => ({
           ...p,
-          // Slower fade to match longer lifetime
-          opacity: p.opacity * 0.99,
-          // Slower shrink to match longer lifetime
-          size: p.size * 0.995,
+          // Adjust fade rate based on page - faster fade for shorter lifetime on non-homepage
+          opacity: p.opacity * (isHomePage ? 0.99 : 0.9),
+          // Adjust shrink rate based on page - faster shrink for shorter lifetime on non-homepage
+          size: p.size * (isHomePage ? 0.995 : 0.95),
           // Update position based on velocity
           x: p.x + p.velocityX,
           y: p.y + p.velocityY
@@ -211,7 +217,7 @@ const CustomCursor: React.FC = () => {
       document.body.classList.remove('cursor-none');
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isPointer]);
+  }, [isHomePage, isPointer]);
 
   return (
     <>
