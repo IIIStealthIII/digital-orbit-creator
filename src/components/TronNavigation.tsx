@@ -26,27 +26,26 @@ const TronNavigation: React.FC = () => {
   ];
 
   return (
-    <div className="fixed top-0 left-0 z-40 p-2 flex flex-wrap gap-1">
+    <div className="fixed top-0 left-0 z-40 p-4 flex flex-wrap gap-2">
       {navItems.map((item) => (
         <Link
           key={item.path}
           to={item.path}
-          className={`tron-button ${
+          className={`tron-nav-button ${
             item.isMain ? 'text-sm md:text-base' : 'text-xs md:text-sm'
           } ${
             currentPath === item.path 
-              ? 'bg-tron-cyan bg-opacity-20 border-opacity-100 glow-border' 
+              ? 'bg-tron-cyan bg-opacity-20 border-opacity-100 glow-border-nav' 
               : 'bg-opacity-10 border-opacity-50'
-          } rhombus-shape`}
+          }`}
           style={{
             width: item.isMain ? 'auto' : 'auto',
-            minWidth: item.isMain ? '90px' : '70px',
-            padding: item.isMain ? '0.4rem 0.6rem' : '0.3rem 0.5rem',
-            margin: '0.15rem',
-            transform: 'skew(-10deg)',
+            minWidth: item.isMain ? '100px' : '80px',
+            padding: item.isMain ? '0.5rem 0.7rem' : '0.4rem 0.6rem',
+            margin: '0.2rem',
           }}
         >
-          <span style={{ display: 'block', transform: 'skew(10deg)' }}>
+          <span>
             {item.name}
           </span>
         </Link>
