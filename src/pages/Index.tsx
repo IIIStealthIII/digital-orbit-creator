@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
-import OrbitSystem from '@/components/OrbitSystem';
-import CustomCursor from '@/components/CustomCursor';
+import OrbitSystem from '@/components/orbit/OrbitSystem';
 
 const Index = () => {
   // Disable scrolling on the index (splash) page
@@ -19,8 +18,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center overflow-hidden cursor-none">
-      <CustomCursor />
+    <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
       <div className="relative w-full h-full">
         <OrbitSystem />
       </div>

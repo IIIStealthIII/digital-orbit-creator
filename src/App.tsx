@@ -15,6 +15,7 @@ import Electronics from "./pages/Electronics";
 import OtherProjects from "./pages/OtherProjects";
 import WebSites from "./pages/WebSites";
 import NotFound from "./pages/NotFound";
+import CustomCursor from "./components/CustomCursor";
 
 const queryClient = new QueryClient();
 
@@ -23,21 +24,24 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/games" element={<Games />} />
-          <Route path="/apps" element={<Apps />} />
-          <Route path="/websites" element={<WebSites />} />
-          <Route path="/code" element={<CodeExamples />} />
-          <Route path="/3d-printing" element={<ThreeDPrinting />} />
-          <Route path="/3d-models" element={<ThreeDModels />} />
-          <Route path="/electronics" element={<Electronics />} />
-          <Route path="/other" element={<OtherProjects />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="cursor-none">
+        <CustomCursor />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/apps" element={<Apps />} />
+            <Route path="/websites" element={<WebSites />} />
+            <Route path="/code" element={<CodeExamples />} />
+            <Route path="/3d-printing" element={<ThreeDPrinting />} />
+            <Route path="/3d-models" element={<ThreeDModels />} />
+            <Route path="/electronics" element={<Electronics />} />
+            <Route path="/other" element={<OtherProjects />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
     </TooltipProvider>
   </QueryClientProvider>
 );
