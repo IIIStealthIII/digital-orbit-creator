@@ -107,9 +107,9 @@ const CustomCursor: React.FC = () => {
         
       
         if (isPointer) {
-          orbitSpeed.current = 6;
+          orbitSpeed.current = 3;
         } else {
-          orbitSpeed.current = 1.5;
+          orbitSpeed.current = .5;
         }
         
         // Only emit particles if cursor is moving fast enough
