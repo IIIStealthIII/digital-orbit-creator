@@ -24,9 +24,9 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <div className="cursor-none">
-        <CustomCursor />
-        <BrowserRouter>
+      <BrowserRouter>
+        <div className="cursor-none">
+          <CustomCursor />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
@@ -40,8 +40,8 @@ const App = () => (
             <Route path="/other" element={<OtherProjects />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </div>
+        </div>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
