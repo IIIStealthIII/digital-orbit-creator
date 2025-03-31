@@ -133,10 +133,10 @@ const CustomCursor: React.FC = () => {
       const color = particleColors[Math.floor(Math.random() * particleColors.length)];
       
       // Set lifetime based on current page
-      // Home page (splash): 4400-5200ms lifetime
+      // Home page (splash): 3000-3500ms lifetime
       // Other pages: 400-600ms lifetime (significantly shorter)
       const lifetime = isHomePage 
-        ? Math.random() * 800 + 4400  // 4400-5200ms for home page
+        ? Math.random() * 500 + 3000  // 3000-3500ms for home page
         : Math.random() * 200 + 400;  // 400-600ms for other pages
       
       // Add slight random offset to particle position
