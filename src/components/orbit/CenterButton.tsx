@@ -24,27 +24,21 @@ const CenterButton: React.FC<CenterButtonProps> = ({
     const updatePosition = () => {
       setPosition(prev => {
         let newX = prev.x + velocityX;
-        let newY = prev.y + velocityY;
+        let newY = prev.y; // Remove Y movement by not updating Y position
         
         if (Math.abs(newX) > maxOffset) {
           velocityX *= -1;
           newX = Math.sign(newX) * maxOffset;
         }
         
-        if (Math.abs(newY) > maxOffset) {
-          velocityY *= -1;
-          newY = Math.sign(newY) * maxOffset;
-        }
-        
         if (Math.random() < 0.01) {
           velocityX += (Math.random() * 0.2 - 0.1);
-          velocityY += (Math.random() * 0.2 - 0.1);
+          // Remove Y velocity changes
           
           const maxVelocity = 0.8;
-          const currentVelocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+          const currentVelocity = Math.abs(velocityX); // Only consider X velocity
           if (currentVelocity > maxVelocity) {
             velocityX = (velocityX / currentVelocity) * maxVelocity;
-            velocityY = (velocityY / currentVelocity) * maxVelocity;
           }
         }
         
@@ -93,7 +87,7 @@ const CenterButton: React.FC<CenterButtonProps> = ({
       onClick={() => navigate(path)} 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`tron-button animate-float z-10 rounded-full ${
+      className={`tron-button ${
         isHovered ? 'hover-highlighted' : (isHighlighted ? 'highlighted-button text-brightness-transition' : 'glow-text')
       }`}
       style={{ 
