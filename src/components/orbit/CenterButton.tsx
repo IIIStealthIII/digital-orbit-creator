@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CenterButtonProps } from './types';
 
@@ -11,57 +11,7 @@ const CenterButton: React.FC<CenterButtonProps> = ({
   id 
 }) => {
   const navigate = useNavigate();
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
-  const animationRef = useRef<number>();
-
-  useEffect(() => {
-    const maxOffset = size * 0.3;
-    
-    let velocityX = (Math.random() * 2 - 1) * 0.5;
-    let velocityY = (Math.random() * 2 - 1) * 0.5;
-    
-    const updatePosition = () => {
-      setPosition(prev => {
-        let newX = prev.x + velocityX;
-        let newY = prev.y + velocityY;
-        
-        if (Math.abs(newX) > maxOffset) {
-          velocityX *= -1;
-          newX = Math.sign(newX) * maxOffset;
-        }
-        
-        if (Math.abs(newY) > maxOffset) {
-          velocityY *= -1;
-          newY = Math.sign(newY) * maxOffset;
-        }
-        
-        if (Math.random() < 0.01) {
-          velocityX += (Math.random() * 0.2 - 0.1);
-          velocityY += (Math.random() * 0.2 - 0.1);
-          
-          const maxVelocity = 0.8;
-          const currentVelocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-          if (currentVelocity > maxVelocity) {
-            velocityX = (velocityX / currentVelocity) * maxVelocity;
-            velocityY = (velocityY / currentVelocity) * maxVelocity;
-          }
-        }
-        
-        return { x: newX, y: newY };
-      });
-      
-      animationRef.current = requestAnimationFrame(updatePosition);
-    };
-    
-    animationRef.current = requestAnimationFrame(updatePosition);
-    
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [size]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -93,15 +43,15 @@ const CenterButton: React.FC<CenterButtonProps> = ({
       onClick={() => navigate(path)} 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`tron-button animate-float z-10 rounded-full ${
+      className={`tron-button animate-none z-10 rounded-full ${
         isHovered ? 'hover-highlighted' : (isHighlighted ? 'highlighted-button text-brightness-transition' : 'glow-text')
       }`}
       style={{ 
         width: `${size}px`, 
         height: `${size}px`,
         boxShadow: glowIntensity,
-        transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-        transition: 'box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out',
+        transform: `scale(${scale})`,
+        transition: 'box-shadow 0.3s ease-in-out, transform 0.5s ease-in-out',
         zIndex: isHovered ? 100 : 10,
         color: isHovered 
           ? 'rgba(16, 249, 241, 1)' /* Bright cyan when hovered */
